@@ -8,9 +8,9 @@
 # 运行
 `php bin/hyperf.php start`
 # 访问后台
-`http://127.0.0.1:9501/admin/index.html`
-账号：`admin`
-密码：`123456`
++ 网址：`http://127.0.0.1:9501/admin/index.html`
++ 账号：`admin`
++ 密码：`123456`
 # 优势
 + 基于layui前后端分离开发，页面占内存超低，再也不用怕被老板说卡的半死了
 + 代码清晰，扩展简单
