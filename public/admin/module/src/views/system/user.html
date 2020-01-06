@@ -1,0 +1,114 @@
+<view id="system-user">
+    <title>用户管理</title>
+
+    <div class="layui-card layadmin-header">
+        <div class="layui-breadcrumb">
+            <a lay-href="">系统管理</a>
+            <a><cite>用户管理</cite></a>
+        </div>
+    </div>
+
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-tab layui-tab-brief">
+                <ul class="layui-tab-title">
+                    <li class="layui-this">所有用户</li>
+                </ul>
+                <div class="layui-tab-content">
+                    <div class="layui-tab-item layui-show">
+                        <form class="query"></form>
+
+                        <div style="margin-bottom: 10px;">
+                            <button class="layui-btn layui-btn-primary layui-btn-sm create">
+                                新增用户
+                            </button>
+                            <button class="layui-btn layui-btn-primary layui-btn-sm del">
+                                删除选中
+                            </button>
+                        </div>
+                        <table id="system-user-table" lay-filter="system-user-table"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</view>
+
+
+<script>
+    layui.use(['hex'], function () {
+        var $ = layui.$, hex = layui.hex, tableInstance, saveUrl = '/system/user/saveUser';
+
+        let modal = (values = {}) => {
+            hex.popup(saveUrl, [
+                {title: "头像", name: "face", type: "image", placeholder: "请选择图片"},
+                {title: "用户名", name: "user", type: "input", placeholder: "请输入用户名"},
+                {title: "密码", name: "pass", type: "input", placeholder: "请输入密码"},
+                {title: "角色", name: "role", type: "checkbox", dict: "system_role,id,name"},
+                {title: "状态", name: "status", type: "switch", text: "启用"}
+            ], res => {
+                tableInstance.instance.reload();
+            }, values);
+        }
+
+        tableInstance = hex.renderTable('system-user-table', '/system/user/getUsers', '#system-user-table', [[
+            {
+                type: 'checkbox', fixed: 'left'
+            }
+            , {
+                field: 'user', title: '用户名'
+            }
+            , {
+                field: 'login_date', title: '登录时间'
+            }
+            , {
+                field: 'create_date', title: '创建时间'
+            }
+            , {
+                field: 'login_ip', title: '登录IP'
+            }
+            , {
+                field: 'status', title: '状态', templet: function (d) {
+                    return '<input type="checkbox" name="status"  lay-filter="system-user-status" title="启用" data-id="' + d.id + '" ' + (d.status === 1 ? "checked" : "") + '>';
+                }
+            },
+            {
+                templet: function (d) {
+                    return '<button class="layui-btn layui-btn-warm layui-btn-xs edit" data-id="' + d.id + '"><i class="layui-icon layui-icon-auz"></i>修改</button>';
+                }
+            }
+        ]], res => {
+            if (res.data !== undefined) {
+                res.data.forEach((r, index) => {
+                    res.data[index].role = [];
+                    res.data[index].roles.forEach(item => {
+                        res.data[index].role.push(item.id);
+                    });
+                });
+            }
+            hex.setIdMap(res.data);
+            $('#system-user .edit').click(function () {
+                modal(hex.getIdMap(hex.getObjectId(this)));
+            });
+        }, saveUrl, [
+            {type: "checkbox", filter: "system-user-status", name: "status"}
+        ]);
+
+        $('#system-user .create').click(() => {
+            modal();
+        });
+
+        $('#system-user .del').click(() => {
+            var data = hex.listObjectToArray(tableInstance.table.checkStatus('system-user-table').data);
+            hex.deleteBatchEntity('/system/user/delUser', data, res => {
+                tableInstance.instance.reload();
+            });
+        });
+
+        hex.query('#system-user .query', tableInstance.instance, [
+            {title: "用户名", name: "equal-user", type: "input", width: 151},
+            {title: "注册时间", name: "betweenStart-create_date", type: "date", width: 170},
+            {title: "请选择状态", name: "equal-status", type: "select", width: 170, dict: "system_user_status"},
+        ]);
+    });
+</script>

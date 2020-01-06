@@ -1,0 +1,90 @@
+<view id="system-dict">
+    <title>数据字典</title>
+
+    <div class="layui-card layadmin-header">
+        <div class="layui-breadcrumb">
+            <a lay-href="">系统管理</a>
+            <a><cite>数据字典</cite></a>
+        </div>
+    </div>
+
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-tab layui-tab-brief">
+                <ul class="layui-tab-title">
+                    <li class="layui-this">所有字典</li>
+                </ul>
+                <div class="layui-tab-content">
+                    <div class="layui-tab-item layui-show">
+                        <div style="margin-bottom: 10px;">
+                            <button class="layui-btn layui-btn-primary layui-btn-sm create">
+                                新增字典
+                            </button>
+                            <button class="layui-btn layui-btn-primary layui-btn-sm del">
+                                删除选中
+                            </button>
+                        </div>
+
+                        <table id="system-dict-table" lay-filter="system-dict-table"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</view>
+
+
+<script>
+    layui.use(['hex'], function () {
+        var $ = layui.$, hex = layui.hex, tableInstance, saveUrl = '/system/dict/saveDict';
+
+        let modal = (values = {}) => {
+            hex.popup(saveUrl, [
+                {title: "字典名称", name: "name", type: "input", placeholder: "请输入字典名称"},
+                {title: "字典编码", name: "code", type: "input", placeholder: "请输入字典编码"},
+                {title: "字典说明", name: "remark", type: "input", placeholder: "字典说明"}
+            ], res => {
+                tableInstance.instance.reload();
+            }, values);
+        }
+
+        tableInstance = hex.renderTable('system-dict-table', '/system/dict/getDicts', '#system-dict-table', [[
+            {
+                type: 'checkbox', fixed: 'left'
+            }
+            , {
+                field: 'name', title: '字典名称', edit: "text"
+            }
+            , {
+                field: 'code', title: '字典编码', edit: "text"
+            }
+            , {
+                field: 'remark', title: '字典注释', edit: "text"
+            },
+            {
+                templet: function (d) {
+                    return '<button class="layui-btn  layui-btn-xs edit" data-id="' + d.id + '"><i class="layui-icon layui-icon-auz"></i>数据列表</button>';
+                }
+            }
+        ]], res => {
+            hex.setIdMap(res.data);
+            $('#system-dict .edit').click(function () {
+                let objectId = hex.getObjectId(this);
+                hex.set('systemDictId', objectId);
+                hex.remoteViewOpen('module/src/views/system/dictList.html');
+            });
+        }, saveUrl);
+
+
+        $('#system-dict .create').click(() => {
+            modal();
+        });
+
+        $('#system-dict .del').click(() => {
+            var data = hex.listObjectToArray(tableInstance.table.checkStatus('system-dict-table').data);
+            hex.deleteBatchEntity('/system/dict/delDict', data, res => {
+                tableInstance.instance.reload();
+            })
+        });
+    });
+</script>

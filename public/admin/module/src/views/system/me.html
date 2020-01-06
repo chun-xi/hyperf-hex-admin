@@ -1,0 +1,207 @@
+<title>我的资料</title>
+
+<div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+        <a lay-href="">主页</a>
+        <a><cite>设置</cite></a>
+        <a><cite>我的资料</cite></a>
+    </div>
+</div>
+
+<style>
+    .layui-input-inline {
+        line-height: 38px;
+    }
+
+    #admin-me-info .admin-me-form-data .admin-me-face img {
+        width: 100px;
+        -webkit-border-radius: 50%;
+        -moz-border-radius: 50%;
+        border-radius: 50%;
+        border: 1px solid #e6fffa;
+        -moz-box-shadow: 2px 2px 5px #333333;
+        -webkit-box-shadow: 2px 2px 5px #333333;
+        box-shadow: 2px 2px 5px #333333;
+        cursor: pointer;
+    }
+
+    #admin-me-info .admin-me-form-data .system-role-status-success {
+        border: 1px solid #20bd3e;
+    }
+
+    #admin-me-info .admin-me-form-data .system-role-status-error {
+        border: 1px solid #ffe941;
+    }
+</style>
+
+<div class="layui-fluid" id="admin-me-info">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">我的资料</div>
+                <div class="layui-card-body">
+
+                    <form class="layui-form admin-me-form-data" style="width: 420px;margin: 0 auto;">
+                        <div class="layui-form-item">
+                            <input type="hidden" name="face" value="">
+                            <label class="layui-form-label"></label>
+                            <div class="layui-input-inline admin-me-face">
+                                <img src="" alt="点击更换头像">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">用户名</label>
+                            <div class="layui-input-inline admin-me-username"></div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">我的角色</label>
+                            <div class="layui-input-inline admin-me-roles"></div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">昵称</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="nickname" autocomplete="off" placeholder="请输入昵称"
+                                       class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">手机</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="phone" placeholder="请输入手机号" autocomplete="off"
+                                       class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">新密码</label>
+                            <div class="layui-input-inline">
+                                <input type="password" name="new_password" placeholder="新密码" autocomplete="off"
+                                       class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">再次输入</label>
+                            <div class="layui-input-inline">
+                                <input type="password" name="re_new_password" placeholder="重复输入新密码" autocomplete="off"
+                                       class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">原密码</label>
+                            <div class="layui-input-inline">
+                                <input type="password" name="password" placeholder="原密码" autocomplete="off"
+                                       class="layui-input layui-disabled" disabled>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn admin-me-save" type="button">保存修改</button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    layui.use(['jquery', 'admin', 'form', 'hex', 'upload'], function () {
+        var $ = layui.jquery, admin = layui.admin, form = layui.form, hex = layui.hex, upload = layui.upload,
+            setter = layui.setter,
+            username;
+        var rolesInstance = $('#admin-me-info .admin-me-roles');
+        rolesInstance.html('');
+
+        var event = {
+            getMeInfo: function () {
+                admin.req({
+                    url: "/system/user/getMeInfo",
+                    method: "POST",
+                    done: function (res) {
+                        //角色
+                        res.data.roles.forEach(function (item, index) {
+                            var css = item.status === '1' ? 'system-role-status-success' : 'system-role-status-error';
+                            rolesInstance.append('<div><button type="button" class="layui-btn ' + css + ' layui-btn-primary layui-btn-sm system-role-info-id-' + index + '"><b>' + item.name + '</b></button></div>');
+                        });
+                        username = res.data.user;
+                        $('#admin-me-info .admin-me-username').html(username);
+                        $('#admin-me-info .admin-me-form-data input[name=nickname]').val(res.data.nickname);
+                        $('#admin-me-info .admin-me-form-data input[name=phone]').val(res.data.phone);
+                        $('#admin-me-info .admin-me-form-data input[name=face]').val(res.data.face);
+                        $('#admin-me-info .admin-me-form-data .admin-me-face img').attr('src', res.data.face);
+
+                        form.render();
+                    }
+                });
+            }
+        }
+
+        $('#admin-me-info .admin-me-form-data .admin-me-save').click(function () {
+            let post = hex.paramsToJSONObject(decodeURIComponent($('#admin-me-info .admin-me-form-data').serialize()));
+
+            if (post.new_password !== '') {
+                if (post.new_password !== post.re_new_password) {
+                    layer.msg('两次密码输入不一致');
+                    return;
+                }
+                if (post.password === '') {
+                    layer.msg('您正在进行密码修改操作,请输入原密码进行身份验证!');
+                    return;
+                }
+            }
+
+            admin.req({
+                url: "/system/user/saveMeInfo",
+                data: post,
+                method: "POST",
+                done: function (res) {
+                    layer.msg(res.msg);
+                }
+            });
+        });
+
+        $('#admin-me-info .admin-me-form-data input[name=new_password]').change(function () {
+            var value = this.value, passwordInstance = $('#admin-me-info .admin-me-form-data input[name=password]');
+            if (value != '') {
+                passwordInstance.attr('disabled', false);
+                passwordInstance.removeClass('layui-disabled');
+            } else {
+                passwordInstance.val('');
+                passwordInstance.attr('disabled', true);
+                passwordInstance.addClass('layui-disabled');
+            }
+        });
+
+        upload.render({
+            elem: '.admin-me-face'
+            , url: '/system/other/upload'
+            , headers: {
+                token: layui.data(setter.tableName)[setter.request.tokenName]
+            }
+            , accept: 'images'
+            , acceptMime: 'image/*'
+            , done: res => {
+                if (res.code === 200) {
+                    $('#admin-me-info .admin-me-form-data input[name=face]').val(res.data.path);
+                    $('#admin-me-info .admin-me-form-data .admin-me-face img').attr('src', res.data.path);
+                }
+            }
+            , progress: function (n) {
+                var percent = n + '%';
+                layer.msg(percent);
+            }
+        });
+
+        event.getMeInfo();
+    });
+</script>

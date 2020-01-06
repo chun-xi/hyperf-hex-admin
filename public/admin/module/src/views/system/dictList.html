@@ -1,0 +1,96 @@
+<view id="system-dictList">
+    <title>数据列表</title>
+
+    <div class="layui-card layadmin-header">
+        <div class="layui-breadcrumb">
+            <a lay-href="">系统管理</a>
+            <a><cite>数据列表</cite></a>
+        </div>
+    </div>
+
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-tab layui-tab-brief">
+                <ul class="layui-tab-title">
+                    <li class="layui-this">全部列表</li>
+                </ul>
+                <div class="layui-tab-content">
+                    <div class="layui-tab-item layui-show">
+                        <div style="margin-bottom: 10px;">
+                            <button class="layui-btn layui-btn-primary layui-btn-sm create">
+                                新增数据
+                            </button>
+                            <button class="layui-btn layui-btn-primary layui-btn-sm del">
+                                删除选中
+                            </button>
+                        </div>
+
+                        <table id="system-dictList-table" lay-filter="system-dictList-table"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</view>
+
+
+<script>
+    layui.use(['hex'], function () {
+        var $ = layui.$, hex = layui.hex, tableInstance, saveUrl = '/system/dict/list/saveDictValue',
+            id = hex.get('systemDictId');
+
+        let modal = (values = {}) => {
+            hex.popup(saveUrl, [
+                {title: "id", name: "dict_id", type: "hidden", default: id},
+                {title: "数据名称", name: "name", type: "input", placeholder: "请输入数据名称"},
+                {title: "数据值", name: "val", type: "input", placeholder: "请输入数据值"},
+                {title: "状态", name: "status", type: "switch", text: "启用"},
+                {title: "排序", name: "rank", type: "input", default: 0}
+            ], res => {
+                tableInstance.instance.reload();
+            }, values);
+        }
+
+        tableInstance = hex.renderTable('system-dictList-table', '/system/dict/list/getDictLists?id=' + id, '#system-dictList-table', [[
+            {
+                type: 'checkbox', fixed: 'left'
+            }
+            , {
+                field: 'name', title: '数据名称', edit: "text"
+            }
+            , {
+                field: 'val', title: '数据值', edit: "text", width: 85
+            }
+            , {
+                field: 'status', title: '状态', templet: function (d) {
+                    return '<input type="checkbox" name="status"  lay-filter="system-dictList-status" title="启用" data-id="' + d.id + '" ' + (d.status === 1 ? "checked" : "") + '>';
+                }, width: 110
+            }
+            , {
+                field: 'rank', title: '排序', edit: "text", width: 65
+            }
+            , {
+                field: 'create_date', title: '创建时间'
+            }
+        ]], res => {
+            hex.setIdMap(res.data);
+            $('#system-dictList .edit').click(function () {
+                modal(hex.getIdMap(hex.getObjectId(this)));
+            });
+        }, saveUrl, [
+            {type: "checkbox", filter: "system-dictList-status", name: "status"}
+        ]);
+
+
+        $('#system-dictList .create').click(() => {
+            modal();
+        });
+
+        $('#system-dictList .del').click(() => {
+            var data = hex.listObjectToArray(tableInstance.table.checkStatus('system-dictList-table').data);
+            hex.deleteBatchEntity('/system/dict/list/delDictValue', data, res => {
+                tableInstance.instance.reload();
+            })
+        });
+    });
+</script>

@@ -1,0 +1,185 @@
+<?php
+
+
+namespace App\Entity;
+
+/**
+ * 查询实体
+ * Class QueryTemplateEntity
+ * @package App\Entity
+ */
+class QueryTemplateEntity
+{
+    /**
+     * 查询模型
+     * @var string
+     */
+    private string $model;
+
+    /**
+     * 是否开启分页
+     * @var bool
+     */
+    private bool $paginate = false;
+
+
+    /**
+     * 分页的每页大小
+     * @var int
+     */
+    private int $limit = 15;
+
+
+    /**
+     * 设置原生关联查询
+     * @var array
+     */
+    private array $with = [];
+
+
+    /**
+     * 分页的当前页码
+     * @var int
+     */
+    private int $page = 1;
+
+
+    /**
+     * 查询条件
+     * @var array
+     */
+    private array $where = [];
+
+
+    /**
+     * 显示字段
+     * @var array
+     */
+    private array $field = ['*'];
+
+    /**
+     * @return array
+     */
+    public function getField(): array
+    {
+        return $this->field;
+    }
+
+    /**
+     * @param array $fields
+     * @return QueryTemplateEntity
+     */
+    public function setField(array $fields): self
+    {
+        $this->field = $fields;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getWhere(): array
+    {
+        return $this->where;
+    }
+
+    /**
+     * @param array $where
+     * @return QueryTemplateEntity
+     */
+    public function setWhere(array $where): self
+    {
+        $this->where = $where;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getModel(): string
+    {
+        return $this->model;
+    }
+
+    /**
+     * @param string $model
+     * @return QueryTemplateEntity
+     */
+    public function setModel(string $model): self
+    {
+        $this->model = $model;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPaginate(): bool
+    {
+        return $this->paginate;
+    }
+
+    /**
+     * @param bool $paginate
+     * @return QueryTemplateEntity
+     */
+    public function setPaginate(bool $paginate): self
+    {
+        $this->paginate = $paginate;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLimit(): int
+    {
+        return $this->limit;
+    }
+
+    /**
+     * @param int $limit
+     * @return QueryTemplateEntity
+     */
+    public function setLimit(int $limit): self
+    {
+        $this->limit = $limit;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPage(): int
+    {
+        return $this->page;
+    }
+
+    /**
+     * @param int $page
+     * @return QueryTemplateEntity
+     */
+    public function setPage(int $page): self
+    {
+        $this->page = $page;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getWith(): array
+    {
+        return $this->with;
+    }
+
+    /**
+     * @param array $with
+     * @return QueryTemplateEntity
+     */
+    public function setWith(array $with): self
+    {
+        $this->with[] = $with;
+        return $this;
+    }
+}
