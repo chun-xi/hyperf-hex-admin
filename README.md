@@ -1,7 +1,9 @@
 # hyperf-hex-admin
 基于hyperf开发的后台权限管理系统
 # 预览
-[http://chak.cc:9501/admin/index.html](http://chak.cc:9501/admin/index.html)
++ [http://chak.cc:9501/admin/index.html](http://chak.cc:9501/admin/index.html)
++ 账号：`demo`
++ 密码：`123456`
 
 # 安装
 `composer install `
