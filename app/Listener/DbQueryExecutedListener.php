@@ -44,7 +44,7 @@ class DbQueryExecutedListener implements ListenerInterface
     }
 
     /**
-     * @param QueryExecuted $event
+     * @param object $event
      */
     public function process(object $event)
     {
@@ -56,8 +56,8 @@ class DbQueryExecutedListener implements ListenerInterface
                 }
             }
 
-            // $this->logger->info(sprintf('[%s] %s', $event->time, $sql));
-            var_dump(sprintf('[%s] %s', $event->time, $sql));
+            //$this->logger->info(sprintf('[%s] %s', $event->time, $sql));
+            //var_dump(sprintf('[%s] %s', $event->time, $sql));
         }
     }
 }

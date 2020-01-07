@@ -14,6 +14,7 @@ namespace App\Exception\Handler;
 
 use App\Exception\HexException;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Utils\Codec\Json;
@@ -23,23 +24,42 @@ use Throwable;
 class AppExceptionHandler extends ExceptionHandler
 {
     /**
+     * @Inject()
      * @var StdoutLoggerInterface
      */
     protected $logger;
 
-    public function __construct(StdoutLoggerInterface $logger)
+    /**
+     * 获取错误异常json
+     * @param Throwable $throwable
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     */
+    private function getErrorJson(Throwable $throwable, ResponseInterface $response)
     {
-        $this->logger = $logger;
+        return $response->withStatus(200)->withHeader("content-type", "application/json;chartset=uft-8")->withBody(new SwooleStream(Json::encode(['code' => $throwable->getCode(), 'msg' => $throwable->getMessage()])));
     }
 
+    /**
+     * 异常处理类
+     * @param Throwable $throwable
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     */
     public function handle(Throwable $throwable, ResponseInterface $response)
     {
         if ($throwable instanceof HexException) {
-            return $response->withStatus(200)->withHeader("content-type", "application/json;chartset=uft-8")->withBody(new SwooleStream(Json::encode(['code' => $throwable->getCode(), 'msg' => $throwable->getMessage()])));
+            return $this->getErrorJson($throwable, $response);
         }
-        $this->logger->error(sprintf('%s[%s] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile()));
-        $this->logger->error($throwable->getTraceAsString());
-        return $response->withStatus(500)->withHeader("content-type", "application/json;chartset=uft-8")->withBody(new SwooleStream(Json::encode(['code' => $throwable->getCode(), 'msg' => $throwable->getMessage()])));
+        try {
+            $this->logger->error(sprintf('%s[%s] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile()));
+            $this->logger->error($throwable->getTraceAsString());
+        } catch (\Exception $e) {
+            return $this->getErrorJson($throwable, $response);
+        } catch (\Error $e) {
+            return $this->getErrorJson($throwable, $response);
+        }
+        return $this->getErrorJson($throwable, $response);
     }
 
     public function isValid(Throwable $throwable): bool

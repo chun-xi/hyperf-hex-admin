@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Controller\System;
 
-
 use App\Controller\HexBaseController;
 use App\Service\SystemUserServiceInterface;
 use Hyperf\Di\Annotation\Inject;
@@ -38,6 +37,7 @@ class SystemLoginController extends HexBaseController
             'pass.required' => '密码不能为空',
             'pass.between' => '密码错误'
         ]);
+
         $jwt = $this->systemUserService->login($this->request->post(), $this->getAddress());
         return $this->response->json($this->getJson(200, 'success', ['token' => $jwt]));
     }

@@ -50,7 +50,7 @@ class AuthMiddleware implements MiddlewareInterface
         } catch (\Exception $e) {
             throw new HexException("登录已过期", 1001);
         }
-        
+
         $userId = $user->data->userId;
 
         if (!$userId) {
