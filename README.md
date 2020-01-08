@@ -16,7 +16,7 @@
 + 账号：`admin`
 + 密码：`123456`
 # 文档
-+ [两分钟入门教程](blob/master/doc/简单使用教程.md)
++ [两分钟入门教程](https://github.com/266945/hyperf-hex-admin/blob/master/doc/%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B.md)
 # 优势
 + 基于layui前后端分离开发，页面占内存超低，再也不用怕被老板说卡的半死了
 + 代码清晰，扩展简单
