@@ -1,21 +1,34 @@
 /*
  Navicat MySQL Data Transfer
 
- Source Server         : hex
+ Source Server         : 167.179.101.150-hex
  Source Server Type    : MySQL
- Source Server Version : 50728
- Source Host           : 10.10.72.66:3306
+ Source Server Version : 80017
+ Source Host           : 167.179.101.150:3306
  Source Schema         : hex
 
  Target Server Type    : MySQL
- Target Server Version : 50728
+ Target Server Version : 80017
  File Encoding         : 65001
 
- Date: 06/01/2020 18:04:40
+ Date: 08/01/2020 20:49:04
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for hex_system_config
+-- ----------------------------
+DROP TABLE IF EXISTS `hex_system_config`;
+CREATE TABLE `hex_system_config`  (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `key` varchar(42) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '键',
+  `name` varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '配置名称',
+  `options` json NOT NULL COMMENT '配置选项',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `key`(`key`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for hex_system_dict
@@ -52,7 +65,7 @@ CREATE TABLE `hex_system_dict_list`  (
   INDEX `dict_id`(`dict_id`) USING BTREE,
   INDEX `status`(`status`) USING BTREE,
   INDEX `rank`(`rank`) USING BTREE,
-  CONSTRAINT `hex_system_dict_list_ibfk_1` FOREIGN KEY (`dict_id`) REFERENCES `hex_system_dict` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+  CONSTRAINT `hex_system_dict_list_ibfk_1` FOREIGN KEY (`dict_id`) REFERENCES `hex_system_dict` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -93,43 +106,47 @@ CREATE TABLE `hex_system_role_router`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `router_id`(`router_id`) USING BTREE,
   INDEX `role_id`(`role_id`) USING BTREE,
-  CONSTRAINT `hex_system_role_router_ibfk_1` FOREIGN KEY (`router_id`) REFERENCES `hex_system_router` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `hex_system_role_router_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `hex_system_role` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+  CONSTRAINT `hex_system_role_router_ibfk_1` FOREIGN KEY (`router_id`) REFERENCES `hex_system_router` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT `hex_system_role_router_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `hex_system_role` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 339 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of hex_system_role_router
 -- ----------------------------
-INSERT INTO `hex_system_role_router` VALUES (309, 5, 1);
-INSERT INTO `hex_system_role_router` VALUES (310, 32, 1);
-INSERT INTO `hex_system_role_router` VALUES (311, 34, 1);
-INSERT INTO `hex_system_role_router` VALUES (312, 33, 1);
-INSERT INTO `hex_system_role_router` VALUES (313, 4, 1);
-INSERT INTO `hex_system_role_router` VALUES (314, 3, 1);
-INSERT INTO `hex_system_role_router` VALUES (315, 30, 1);
-INSERT INTO `hex_system_role_router` VALUES (316, 31, 1);
-INSERT INTO `hex_system_role_router` VALUES (317, 17, 1);
-INSERT INTO `hex_system_role_router` VALUES (318, 20, 1);
-INSERT INTO `hex_system_role_router` VALUES (319, 19, 1);
-INSERT INTO `hex_system_role_router` VALUES (320, 18, 1);
-INSERT INTO `hex_system_role_router` VALUES (321, 9, 1);
-INSERT INTO `hex_system_role_router` VALUES (322, 26, 1);
-INSERT INTO `hex_system_role_router` VALUES (323, 25, 1);
-INSERT INTO `hex_system_role_router` VALUES (324, 24, 1);
-INSERT INTO `hex_system_role_router` VALUES (325, 23, 1);
-INSERT INTO `hex_system_role_router` VALUES (326, 22, 1);
-INSERT INTO `hex_system_role_router` VALUES (327, 21, 1);
-INSERT INTO `hex_system_role_router` VALUES (328, 10, 1);
-INSERT INTO `hex_system_role_router` VALUES (329, 7, 1);
-INSERT INTO `hex_system_role_router` VALUES (330, 16, 1);
-INSERT INTO `hex_system_role_router` VALUES (331, 11, 1);
-INSERT INTO `hex_system_role_router` VALUES (332, 8, 1);
-INSERT INTO `hex_system_role_router` VALUES (333, 6, 1);
-INSERT INTO `hex_system_role_router` VALUES (334, 29, 1);
-INSERT INTO `hex_system_role_router` VALUES (335, 28, 1);
-INSERT INTO `hex_system_role_router` VALUES (336, 27, 1);
-INSERT INTO `hex_system_role_router` VALUES (337, 1, 1);
-INSERT INTO `hex_system_role_router` VALUES (338, 2, 1);
+INSERT INTO `hex_system_role_router` VALUES (370, 5, 1);
+INSERT INTO `hex_system_role_router` VALUES (371, 35, 1);
+INSERT INTO `hex_system_role_router` VALUES (372, 38, 1);
+INSERT INTO `hex_system_role_router` VALUES (373, 37, 1);
+INSERT INTO `hex_system_role_router` VALUES (374, 36, 1);
+INSERT INTO `hex_system_role_router` VALUES (375, 32, 1);
+INSERT INTO `hex_system_role_router` VALUES (376, 34, 1);
+INSERT INTO `hex_system_role_router` VALUES (377, 33, 1);
+INSERT INTO `hex_system_role_router` VALUES (378, 4, 1);
+INSERT INTO `hex_system_role_router` VALUES (379, 3, 1);
+INSERT INTO `hex_system_role_router` VALUES (380, 30, 1);
+INSERT INTO `hex_system_role_router` VALUES (381, 31, 1);
+INSERT INTO `hex_system_role_router` VALUES (382, 17, 1);
+INSERT INTO `hex_system_role_router` VALUES (383, 20, 1);
+INSERT INTO `hex_system_role_router` VALUES (384, 19, 1);
+INSERT INTO `hex_system_role_router` VALUES (385, 18, 1);
+INSERT INTO `hex_system_role_router` VALUES (386, 9, 1);
+INSERT INTO `hex_system_role_router` VALUES (387, 26, 1);
+INSERT INTO `hex_system_role_router` VALUES (388, 25, 1);
+INSERT INTO `hex_system_role_router` VALUES (389, 24, 1);
+INSERT INTO `hex_system_role_router` VALUES (390, 23, 1);
+INSERT INTO `hex_system_role_router` VALUES (391, 22, 1);
+INSERT INTO `hex_system_role_router` VALUES (392, 21, 1);
+INSERT INTO `hex_system_role_router` VALUES (393, 10, 1);
+INSERT INTO `hex_system_role_router` VALUES (394, 7, 1);
+INSERT INTO `hex_system_role_router` VALUES (395, 16, 1);
+INSERT INTO `hex_system_role_router` VALUES (396, 11, 1);
+INSERT INTO `hex_system_role_router` VALUES (397, 8, 1);
+INSERT INTO `hex_system_role_router` VALUES (398, 6, 1);
+INSERT INTO `hex_system_role_router` VALUES (399, 29, 1);
+INSERT INTO `hex_system_role_router` VALUES (400, 28, 1);
+INSERT INTO `hex_system_role_router` VALUES (401, 27, 1);
+INSERT INTO `hex_system_role_router` VALUES (402, 1, 1);
+INSERT INTO `hex_system_role_router` VALUES (403, 2, 1);
 
 -- ----------------------------
 -- Table structure for hex_system_router
@@ -182,6 +199,10 @@ INSERT INTO `hex_system_router` VALUES (31, '/system/other/upload', 30, '文件�
 INSERT INTO `hex_system_router` VALUES (32, 'personal', 5, '个人中心', 0, NULL, 0, 0);
 INSERT INTO `hex_system_router` VALUES (33, '/system/user/saveMeInfo', 32, '修改资料', 1, NULL, 1, 0);
 INSERT INTO `hex_system_router` VALUES (34, '/system/user/logout', 32, '安全注销', 1, NULL, 1, 0);
+INSERT INTO `hex_system_router` VALUES (35, 'config', 5, '配置管理', 1, NULL, 0, 5);
+INSERT INTO `hex_system_router` VALUES (36, '/system/config/getConfigs', 35, '获取配置列表', 1, NULL, 1, 0);
+INSERT INTO `hex_system_router` VALUES (37, '/system/config/saveConfig', 35, '保存配置', 1, NULL, 1, 0);
+INSERT INTO `hex_system_router` VALUES (38, '/system/config/delConfig', 35, '删除配置', 1, NULL, 1, 0);
 
 -- ----------------------------
 -- Table structure for hex_system_user
@@ -207,7 +228,7 @@ CREATE TABLE `hex_system_user`  (
 -- ----------------------------
 -- Records of hex_system_user
 -- ----------------------------
-INSERT INTO `hex_system_user` VALUES (1, 'admin', 'ea0b83a8daeca2bcaaaae913342cdad9', '/resource/20200105/64f22b996f5c3ae.jpg', '13800138000', '没有梦想的小鱼', '57b386b112780d120f16a87b51584ef', '2020-01-05 21:11:32', '2020-01-05 21:11:26', '10.10.72.26', 1);
+INSERT INTO `hex_system_user` VALUES (1, 'admin', 'ea0b83a8daeca2bcaaaae913342cdad9', '/resource/20200107/b427a257f11bdb8.jpg', '13800138000', '没有梦想的小鱼', '57b386b112780d120f16a87b51584ef', '2020-01-08 18:41:32', '2020-01-05 21:11:26', '203.177.116.119', 1);
 INSERT INTO `hex_system_user` VALUES (4, 'root', 'cce280985a4dccd4a8378d484df1cbee', NULL, NULL, NULL, 'dd4e15eefa384d9fcaf2db361d2b1fb', '2020-01-05 17:28:59', '2020-01-05 17:45:02', '10.10.72.26', 1);
 
 -- ----------------------------
@@ -221,8 +242,8 @@ CREATE TABLE `hex_system_user_role`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `user_id`(`user_id`) USING BTREE,
   INDEX `role_id`(`role_id`) USING BTREE,
-  CONSTRAINT `hex_system_user_role_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `hex_system_role` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `hex_system_user_role_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `hex_system_user` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+  CONSTRAINT `hex_system_user_role_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `hex_system_role` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT `hex_system_user_role_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `hex_system_user` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 28 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
