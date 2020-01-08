@@ -14,5 +14,6 @@ return [
     \Hyperf\Validation\Contract\ValidatorFactoryInterface::class => \Hyperf\Validation\ValidatorFactory::class,
     \App\Service\SystemUserServiceInterface::class => \App\Service\impl\SystemUserService::class,
     \App\Service\SystemMenuServiceInterface::class => \App\Service\impl\SystemMenuService::class,
-    \App\Service\SystemDictServiceInterface::class => \App\Service\impl\SystemDictService::class
+    \App\Service\SystemDictServiceInterface::class => \App\Service\impl\SystemDictService::class,
+    \App\Service\SystemConfigServiceInterface::class => \App\Service\impl\SystemConfigService::class
 ];

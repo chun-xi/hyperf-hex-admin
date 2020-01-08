@@ -16,8 +16,9 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
             }
             return res;
         },
-        popup(url, fields, done, values = {}) {
+        popup(url, fields, done, values = {}, area = '660px') {
             let d = ' <div class="layui-card-body"><form class="layui-form layui-form-pane hex-modal">';
+            let objectContainer = {}
 
             //初步渲染界面
             fields.forEach(item => {
@@ -108,6 +109,14 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                             '    </div>\n' +
                             '  </div>';
                         break;
+                    case 'json':
+                        d += '<div class="layui-form-item" pane=""><input type="hidden" name="' + item.name + '" value="' + (values.hasOwnProperty(item.name) ? values[item.name] : '') + '">\n' +
+                            '    <label class="layui-form-label">' + item.title + '</label>\n' +
+                            '    <div class="layui-input-block ' + item.name + '">\n' +
+                            '       <div class="' + item.name + '"></div>' +
+                            '    </div>\n' +
+                            '  </div>';
+                        break;
                 }
             });
             if (values.hasOwnProperty('id')) {
@@ -122,10 +131,11 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                 title: values.hasOwnProperty('id') ? '修改' : '添加',
                 btn: ['确认', '取消'],
                 //  shadeClose: true,
-                area: '660px',
+                area: area,
+                maxmin: true,
                 yes: (index, layero) => {
                     let serialize = decodeURIComponent($('.hex-modal').serialize());
-                    console.log(serialize);
+
                     let paramsToJSONObject = this.paramsToJSONObject(serialize);
                     fields.forEach(item => {
                         switch (item.type) {
@@ -135,8 +145,12 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                                 let data = authtree.getChecked('.hex-modal .' + item.name);
                                 paramsToJSONObject[item.name] = data;
                                 break;
+                            case "json":
+                                paramsToJSONObject[item.name] = encodeURIComponent(JSON.stringify(objectContainer[item.name].get()));
+                                break;
                         }
                     });
+                    console.log(paramsToJSONObject);
                     admin.req({
                         url: url,
                         data: paramsToJSONObject,
@@ -318,6 +332,12 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                                         buttonSpanInstance.html("请稍后,已上传:" + percent);
                                     }
                                 })
+                                break;
+                            case 'json':
+                                objectContainer[item.name] = new JSONEditor(document.getElementsByClassName('hex-modal')[0].getElementsByClassName(item.name)[0], {});
+                                if (values.hasOwnProperty(item.name)) {
+                                    objectContainer[item.name].set(JSON.parse(values[item.name]));
+                                }
                                 break;
                         }
                     });

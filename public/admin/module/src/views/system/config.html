@@ -1,0 +1,88 @@
+<link href="https://cdn.bootcss.com/jsoneditor/7.0.4/jsoneditor.min.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jsoneditor/7.0.4/jsoneditor.min.js"></script>
+
+<view id="system-config">
+    <title>配置管理</title>
+
+    <div class="layui-card layadmin-header">
+        <div class="layui-breadcrumb">
+            <a lay-href="">系统管理</a>
+            <a><cite>配置管理</cite></a>
+        </div>
+    </div>
+
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-tab layui-tab-brief">
+                <ul class="layui-tab-title">
+                    <li class="layui-this">所有配置</li>
+                </ul>
+                <div class="layui-tab-content">
+
+                    <div class="layui-tab-item layui-show">
+                        <div style="margin-bottom: 10px;">
+                            <button class="layui-btn layui-btn-primary layui-btn-sm create">
+                                新增配置
+                            </button>
+                            <button class="layui-btn layui-btn-primary layui-btn-sm del">
+                                删除选中
+                            </button>
+                        </div>
+
+                        <table id="system-config-table" lay-filter="system-config-table"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</view>
+
+
+<script>
+    layui.use(['hex'], function () {
+        var $ = layui.$, hex = layui.hex, tableInstance, saveUrl = '/system/config/saveConfig';
+
+        let modal = (values = {}) => {
+            hex.popup(saveUrl, [
+                {title: "配置选项", name: "options", type: "json", placeholder: "请编辑配置选项"},
+                {title: "配置键名", name: "key", type: "input", placeholder: "请输入配置键名"},
+                {title: "中文名称", name: "name", type: "input", placeholder: "请输入配置中文名称"},
+            ], res => {
+                tableInstance.instance.reload();
+            }, values);
+        }
+
+        tableInstance = hex.renderTable('system-config-table', '/system/config/getConfigs', '#system-config-table', [[
+            {
+                type: 'checkbox', fixed: 'left'
+            }
+            , {
+                field: 'name', title: '配置名称', edit: "text"
+            }
+            , {
+                field: 'key', title: '配置键名'
+            }
+            , {
+                templet: function (d) {
+                    return '<button class="layui-btn layui-btn-warm layui-btn-xs edit" data-id="' + d.id + '"><i class="layui-icon layui-icon-auz"></i>修改</button>';
+                }
+            }
+        ]], res => {
+            hex.setIdMap(res.data);
+            $('#system-config .edit').click(function () {
+                modal(hex.getIdMap(hex.getObjectId(this)));
+            });
+        }, saveUrl);
+
+        $('#system-config .create').click(() => {
+            modal();
+        });
+
+        $('#system-config .del').click(() => {
+            var data = hex.listObjectToArray(tableInstance.table.checkStatus('system-config-table').data);
+            hex.deleteBatchEntity('/system/config/delConfig', data, res => {
+                tableInstance.instance.reload();
+            })
+        });
+    });
+</script>

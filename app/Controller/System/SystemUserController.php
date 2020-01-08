@@ -108,7 +108,6 @@ class SystemUserController extends HexBaseController
         $queryTemplateEntity->setPage((int)$this->request->post('page'));
         $queryTemplateEntity->setPaginate(true);
         $queryTemplateEntity->setWith(['roles']);
-        var_dump($this->request->post());
         $queryTemplateEntity->setWhere($this->request->post());
         $queryTemplateEntity->setField(['id', 'user', 'face', 'login_date', 'create_date', 'status']);
         $data = $this->findTemplateAll($queryTemplateEntity)->toArray();

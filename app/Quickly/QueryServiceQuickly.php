@@ -77,6 +77,7 @@ trait QueryServiceQuickly
 
         foreach ($map as $key => $item) {
             $middle = $createObjectEntity->getMiddle($key);
+            $item = urldecode($item);
             if ($middle) {
                 $middles[] = ['middle' => $middle, 'data' => $item];
             } else {

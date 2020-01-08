@@ -46,7 +46,7 @@
                 {title: "状态", name: "status", type: "switch", text: "启用"}
             ], res => {
                 tableInstance.instance.reload();
-            }, values);
+            }, values, ['100%', '100%']);
         }
 
         tableInstance = hex.renderTable('system-role-table', '/system/role/getRoles', '#system-role-table', [[
