@@ -1,19 +1,3 @@
-/*
- Navicat MySQL Data Transfer
-
- Source Server         : 167.179.101.150-hex
- Source Server Type    : MySQL
- Source Server Version : 80017
- Source Host           : 167.179.101.150:3306
- Source Schema         : hex
-
- Target Server Type    : MySQL
- Target Server Version : 80017
- File Encoding         : 65001
-
- Date: 12/01/2020 22:21:20
-*/
-
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
