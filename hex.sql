@@ -11,7 +11,7 @@
  Target Server Version : 80017
  File Encoding         : 65001
 
- Date: 08/01/2020 20:49:04
+ Date: 12/01/2020 22:21:20
 */
 
 SET NAMES utf8mb4;
@@ -26,9 +26,16 @@ CREATE TABLE `hex_system_config`  (
   `key` varchar(42) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '键',
   `name` varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '配置名称',
   `options` json NOT NULL COMMENT '配置选项',
+  `public` tinyint(4) NOT NULL COMMENT '公开:0否,1是',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `key`(`key`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of hex_system_config
+-- ----------------------------
+INSERT INTO `hex_system_config` VALUES (3, 'appInfo', 'APP信息', '{\"status\": 1, \"appName\": \"HEX-APP\", \"version\": \"1.2.0\"}', 0);
+INSERT INTO `hex_system_config` VALUES (4, 'registerConfig', '注册配置', '{\"type\": 2, \"status\": 1, \"sendMoney\": 100}', 0);
 
 -- ----------------------------
 -- Table structure for hex_system_dict
@@ -72,9 +79,9 @@ CREATE TABLE `hex_system_dict_list`  (
 -- Records of hex_system_dict_list
 -- ----------------------------
 INSERT INTO `hex_system_dict_list` VALUES (1, '菜单', 1, '0', 1, 0, '2020-01-03 20:59:47');
-INSERT INTO `hex_system_dict_list` VALUES (2, '按钮/权限', 1, '1', 1, 1, '2020-01-05 15:02:28');
+INSERT INTO `hex_system_dict_list` VALUES (2, '按钮/权限', 1, '1', 1, 1, '2020-01-12 20:34:05');
 INSERT INTO `hex_system_dict_list` VALUES (5, '正常', 5, '1', 1, 0, '2020-01-06 16:33:49');
-INSERT INTO `hex_system_dict_list` VALUES (6, '封禁', 5, '0', 1, 0, '2020-01-06 16:33:57');
+INSERT INTO `hex_system_dict_list` VALUES (6, '封禁', 5, '0', 1, 0, '2020-01-12 20:34:16');
 
 -- ----------------------------
 -- Table structure for hex_system_role
@@ -86,14 +93,13 @@ CREATE TABLE `hex_system_role`  (
   `status` tinyint(4) UNSIGNED NOT NULL COMMENT '角色状态:0=停用,1=启用',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `status`(`status`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of hex_system_role
 -- ----------------------------
 INSERT INTO `hex_system_role` VALUES (1, '超级管理员', 1);
-INSERT INTO `hex_system_role` VALUES (4, '测试橘色1', 1);
-INSERT INTO `hex_system_role` VALUES (5, '测试橘色2', 1);
+INSERT INTO `hex_system_role` VALUES (6, '超级DEMO员', 1);
 
 -- ----------------------------
 -- Table structure for hex_system_role_router
@@ -108,7 +114,7 @@ CREATE TABLE `hex_system_role_router`  (
   INDEX `role_id`(`role_id`) USING BTREE,
   CONSTRAINT `hex_system_role_router_ibfk_1` FOREIGN KEY (`router_id`) REFERENCES `hex_system_router` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `hex_system_role_router_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `hex_system_role` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 339 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 510 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of hex_system_role_router
@@ -147,6 +153,25 @@ INSERT INTO `hex_system_role_router` VALUES (400, 28, 1);
 INSERT INTO `hex_system_role_router` VALUES (401, 27, 1);
 INSERT INTO `hex_system_role_router` VALUES (402, 1, 1);
 INSERT INTO `hex_system_role_router` VALUES (403, 2, 1);
+INSERT INTO `hex_system_role_router` VALUES (491, 5, 6);
+INSERT INTO `hex_system_role_router` VALUES (492, 35, 6);
+INSERT INTO `hex_system_role_router` VALUES (493, 36, 6);
+INSERT INTO `hex_system_role_router` VALUES (494, 32, 6);
+INSERT INTO `hex_system_role_router` VALUES (495, 34, 6);
+INSERT INTO `hex_system_role_router` VALUES (496, 4, 6);
+INSERT INTO `hex_system_role_router` VALUES (497, 3, 6);
+INSERT INTO `hex_system_role_router` VALUES (498, 17, 6);
+INSERT INTO `hex_system_role_router` VALUES (499, 18, 6);
+INSERT INTO `hex_system_role_router` VALUES (500, 9, 6);
+INSERT INTO `hex_system_role_router` VALUES (501, 24, 6);
+INSERT INTO `hex_system_role_router` VALUES (502, 21, 6);
+INSERT INTO `hex_system_role_router` VALUES (503, 10, 6);
+INSERT INTO `hex_system_role_router` VALUES (504, 7, 6);
+INSERT INTO `hex_system_role_router` VALUES (505, 8, 6);
+INSERT INTO `hex_system_role_router` VALUES (506, 6, 6);
+INSERT INTO `hex_system_role_router` VALUES (507, 27, 6);
+INSERT INTO `hex_system_role_router` VALUES (508, 1, 6);
+INSERT INTO `hex_system_role_router` VALUES (509, 2, 6);
 
 -- ----------------------------
 -- Table structure for hex_system_router
@@ -164,7 +189,7 @@ CREATE TABLE `hex_system_router`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `pid`(`pid`) USING BTREE,
   INDEX `status`(`status`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 35 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 39 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of hex_system_router
@@ -223,13 +248,13 @@ CREATE TABLE `hex_system_user`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `user`(`user`) USING BTREE,
   INDEX `status`(`status`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of hex_system_user
 -- ----------------------------
-INSERT INTO `hex_system_user` VALUES (1, 'admin', 'ea0b83a8daeca2bcaaaae913342cdad9', '/resource/20200107/b427a257f11bdb8.jpg', '13800138000', '没有梦想的小鱼', '57b386b112780d120f16a87b51584ef', '2020-01-08 18:41:32', '2020-01-05 21:11:26', '203.177.116.119', 1);
-INSERT INTO `hex_system_user` VALUES (4, 'root', 'cce280985a4dccd4a8378d484df1cbee', NULL, NULL, NULL, 'dd4e15eefa384d9fcaf2db361d2b1fb', '2020-01-05 17:28:59', '2020-01-05 17:45:02', '10.10.72.26', 1);
+INSERT INTO `hex_system_user` VALUES (1, 'admin', '8b3cbe175607107385e153031b009e98', '/resource/20200107/b427a257f11bdb8.jpg', '13800138000', '没有梦想的小鱼', '5ab76519e8dc23e934625e900075217', '2020-01-12 20:26:06', '2020-01-05 21:11:26', '127.0.0.1', 1);
+INSERT INTO `hex_system_user` VALUES (7, 'demo', 'f097ab3e1c70aa0b85816d384902508b', '/resource/20200109/b400581ab141a17.jpeg', NULL, NULL, 'aad2264d7f0324a0214090f51758494', '2020-01-12 21:02:26', '2020-01-12 20:29:07', '127.0.0.1', 1);
 
 -- ----------------------------
 -- Table structure for hex_system_user_role
@@ -244,12 +269,12 @@ CREATE TABLE `hex_system_user_role`  (
   INDEX `role_id`(`role_id`) USING BTREE,
   CONSTRAINT `hex_system_user_role_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `hex_system_role` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `hex_system_user_role_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `hex_system_user` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 28 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 31 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of hex_system_user_role
 -- ----------------------------
-INSERT INTO `hex_system_user_role` VALUES (22, 4, 1);
 INSERT INTO `hex_system_user_role` VALUES (27, 1, 1);
+INSERT INTO `hex_system_user_role` VALUES (30, 7, 6);
 
 SET FOREIGN_KEY_CHECKS = 1;
