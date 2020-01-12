@@ -558,7 +558,7 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
 
                         switch (dictType) {
                             case "select":
-                                s = '<select lay-ignore style="border: none;appearance:none; outline: none;" onchange="tableChange(\'' + saveUrl + '\' ,\'' + item.id + '\',\'' + field + '\',this.value )">';
+                                s = '<select lay-ignore style="border:1px solid rgba(109,165,189,0.2);border-radius: 35px;font-size: 12px;padding-bottom: 2px;padding-left: 2px;color: #58bdb8;appearance:none; outline: none;" onchange="tableChange(\'' + saveUrl + '\' ,\'' + item.id + '\',\'' + field + '\',this.value )">';
                                 self.property.tableDict[field].forEach(x => {
                                     s += '<option value="' + x.id + '" ' + (id === x.id ? 'selected' : '') + '>' + x.name + '</option>';
                                 });
