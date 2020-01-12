@@ -5,7 +5,8 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
 
     let hex = {
         property: {
-            mapId: {}
+            mapId: {},
+            tableDict: {}
         },
         generateRandStr(len) {
             let chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
@@ -441,6 +442,20 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                 done: done
             });
         },
+        getDictSync(dict) {
+            let data = [];
+            $.ajaxSettings.async = false;
+            admin.req({
+                url: '/system/dict/getDict',
+                method: "post",
+                data: {dict: dict},
+                done: res => {
+                    data = res;
+                }
+            });
+            $.ajaxSettings.async = true;
+            return data;
+        },
         paramsToJSONObject(url) {
             var hash;
             var myJson = {};
@@ -469,6 +484,9 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
         },
         getIdMap(id) {
             return this.property.mapId[id];
+        },
+        getMapItem(obj) {
+            return this.getIdMap(hex.getObjectId(obj))
         },
         getObjectId(obj) {
             return $(obj).attr('data-id');
@@ -506,8 +524,75 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
 
             });
         },
-        renderTable(filter, url, elem, cols, done, saveUrl = null, enhanceListener = null) {
-            let tableInstance;
+        tableChange(saveUrl, id, field, value) {
+            let json = {}
+            json[field] = value;
+            json.id = id;
+            admin.req({
+                url: saveUrl,
+                data: json,
+                method: "post",
+                done: res => {
+                    layer.msg(res.msg);
+                }
+            });
+        },
+        renderTable(filter, url, elem, cols, done, saveUrl = null) {
+            let tableInstance, self = this;
+
+            //注册全局修改事件
+            window.tableChange = function (saveUrl, id, field, value) {
+                self.tableChange(saveUrl, id, field, value);
+            };
+
+            //注册字典
+            for (let i = 0; i < cols[0].length; i++) {
+                let field = cols[0][i].field, dictType = cols[0][i].dictType;
+
+                if (cols[0][i].hasOwnProperty('dict') && dictType !== undefined) {
+                    let dict = this.getDictSync(cols[0][i].dict);
+                    this.property.tableDict[field] = dict.data;
+                    cols[0][i].templet = function (item) {
+
+                        let id = self.property.tableDict[field][item[field]].id, s;
+
+                        switch (dictType) {
+                            case "select":
+                                s = '<select lay-ignore style="border: none;appearance:none; outline: none;" onchange="tableChange(\'' + saveUrl + '\' ,\'' + item.id + '\',\'' + field + '\',this.value )">';
+                                self.property.tableDict[field].forEach(x => {
+                                    s += '<option value="' + x.id + '" ' + (id === x.id ? 'selected' : '') + '>' + x.name + '</option>';
+                                });
+                                s += '</select>';
+                                break;
+                            default:
+                                s = self.property.tableDict[field][item[field]].name;
+                        }
+                        return s;
+                    }.bind(field);
+                } else if (!cols[0][i].hasOwnProperty('dict') && dictType !== undefined) {
+                    cols[0][i].templet = function (item) {
+                        let s;
+                        switch (dictType) {
+                            case "switch":
+                                s = '<input type="checkbox" lay-filter="' + filter + '-checkbox" title="启用" data-field="' + field + '" data-id="' + item.id + '" ' + (item[field] === 1 ? "checked" : "") + '>';
+                                break;
+                        }
+                        return s;
+                    }.bind(field);
+                } else if (cols[0][i].hasOwnProperty('action')) {
+                    cols[0][i].action.forEach(item => {
+                        cols[0][i].templet = function (res) {
+                            let s;
+                            switch (item.type) {
+                                case "button":
+                                    s = '<button class="layui-btn layui-btn-xs ' + item.class + '" data-id="' + res.id + '"><i class="layui-icon ' + item.icon + '"></i>' + item.title + '</button>';
+                                    break;
+                            }
+                            return s;
+                        }
+                    });
+                }
+            }
 
             tableInstance = table.render({
                 elem: elem
@@ -521,52 +606,26 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                 , response: {
                     statusCode: 200
                 },
-                done: done
+                done: result => {
+                    this.setIdMap(result.data);
+                    done(result);
+                }
             });
 
-            if (saveUrl !== null) {
-                table.on('edit(' + filter + ')', function (obj) {
-                    let value = obj.value //得到修改后的值
-                        , data = obj.data //得到所在行所有键值
-                        , field = obj.field; //得到字段
+            //创建checkbox监听器
+            form.on('checkbox(' + filter + '-checkbox)', function (obj) {
+                let id = $(this).attr('data-id'), field = $(this).attr('data-field'),
+                    value = obj.elem.checked === true ? '1' : '0';
+                tableChange(saveUrl, id, field, value);
+            });
 
-                    let json = {}
-                    json[field] = value;
-                    json.id = data.id;
-
-                    admin.req({
-                        url: saveUrl,
-                        data: json,
-                        method: "post",
-                        done: res => {
-                            layer.msg(res.msg);
-                        }
-                    });
-                });
-            }
-
-            if (enhanceListener != null) {
-                //增强监听器
-                enhanceListener.forEach(item => {
-                    switch (item.type) {
-                        case "checkbox":
-                            form.on('checkbox(' + item.filter + ')', function (obj) {
-                                let id = hex.getObjectId(this), val = obj.elem.checked === true ? '1' : '0', json = {}
-                                json[item.name] = val;
-                                json.id = id;
-                                admin.req({
-                                    url: saveUrl,
-                                    data: json,
-                                    method: "post",
-                                    done: res => {
-                                        layer.msg(res.msg);
-                                    }
-                                });
-                            });
-                            break;
-                    }
-                });
-            }
+            //创建edit监听器
+            table.on('edit(' + filter + ')', function (obj) {
+                let value = obj.value //得到修改后的值
+                    , data = obj.data //得到所在行所有键值
+                    , field = obj.field; //得到字段
+                tableChange(saveUrl, data.id, field, value);
+            });
 
             return {instance: tableInstance, table: table};
         },

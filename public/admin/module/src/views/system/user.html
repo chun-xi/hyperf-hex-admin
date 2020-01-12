@@ -68,14 +68,12 @@
                 field: 'login_ip', title: '登录IP'
             }
             , {
-                field: 'status', title: '状态', templet: function (d) {
-                    return '<input type="checkbox" name="status"  lay-filter="system-user-status" title="启用" data-id="' + d.id + '" ' + (d.status === 1 ? "checked" : "") + '>';
-                }
+                field: 'status', title: '状态', dictType: "switch"
             },
             {
-                templet: function (d) {
-                    return '<button class="layui-btn layui-btn-warm layui-btn-xs edit" data-id="' + d.id + '"><i class="layui-icon layui-icon-auz"></i>修改</button>';
-                }
+                action: [
+                    {type: "button", icon: "layui-icon-survey", title: "修改", class: "layui-btn-normal edit"}
+                ]
             }
         ]], res => {
             if (res.data !== undefined) {
@@ -88,11 +86,9 @@
             }
             hex.setIdMap(res.data);
             $('#system-user .edit').click(function () {
-                modal(hex.getIdMap(hex.getObjectId(this)));
+                modal(hex.getMapItem(this));
             });
-        }, saveUrl, [
-            {type: "checkbox", filter: "system-user-status", name: "status"}
-        ]);
+        }, saveUrl);
 
         $('#system-user .create').click(() => {
             modal();

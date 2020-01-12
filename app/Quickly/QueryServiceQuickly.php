@@ -77,10 +77,12 @@ trait QueryServiceQuickly
 
         foreach ($map as $key => $item) {
             $middle = $createObjectEntity->getMiddle($key);
-            $item = urldecode($item);
             if ($middle) {
                 $middles[] = ['middle' => $middle, 'data' => $item];
             } else {
+                if (is_scalar($item)) {
+                    $item = urldecode($item);
+                }
                 $model->$key = $item;
             }
         }

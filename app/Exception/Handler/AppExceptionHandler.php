@@ -17,8 +17,10 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\HttpMessage\Stream\SwooleStream;
+use Hyperf\Logger\LoggerFactory;
 use Hyperf\Utils\Codec\Json;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
 use Throwable;
 
 class AppExceptionHandler extends ExceptionHandler
@@ -27,7 +29,23 @@ class AppExceptionHandler extends ExceptionHandler
      * @Inject()
      * @var StdoutLoggerInterface
      */
+    protected $stdoutLogger;
+
+    /**
+     * @var LoggerInterface
+     */
     protected $logger;
+
+
+    /**
+     * AppExceptionHandler constructor.
+     * @param LoggerFactory $loggerFactory
+     */
+    public function __construct(LoggerFactory $loggerFactory)
+    {
+        $this->logger = $loggerFactory->get('log', 'error');
+    }
+
 
     /**
      * 获取错误异常json
@@ -51,14 +69,12 @@ class AppExceptionHandler extends ExceptionHandler
         if ($throwable instanceof HexException) {
             return $this->getErrorJson($throwable, $response);
         }
-        try {
+        if ((bool)env('DAEMONIZE')) {
             $this->logger->error(sprintf('%s[%s] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile()));
-            $this->logger->error($throwable->getTraceAsString());
-        } catch (\Exception $e) {
-            return $this->getErrorJson($throwable, $response);
-        } catch (\Error $e) {
-            return $this->getErrorJson($throwable, $response);
+        } else {
+            $this->stdoutLogger->error(sprintf('%s[%s] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile()));
         }
+        //$this->stdoutLogger->error($throwable->getTraceAsString());
         return $this->getErrorJson($throwable, $response);
     }
 

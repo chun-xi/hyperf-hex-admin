@@ -14,9 +14,10 @@ declare(strict_types=1);
 use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Log\LogLevel;
 
-return [
-    'app_name' => env('APP_NAME', 'skeleton'),
-    StdoutLoggerInterface::class => [
+$result = ['app_name' => env('APP_NAME', 'hex')];
+
+if (!(bool)env('DAEMONIZE')) {
+    $result[StdoutLoggerInterface::class] = [
         'log_level' => [
             LogLevel::ALERT,
             LogLevel::CRITICAL,
@@ -27,5 +28,7 @@ return [
             LogLevel::NOTICE,
             LogLevel::WARNING,
         ],
-    ],
-];
+    ];
+}
+
+return $result;

@@ -62,9 +62,7 @@
                 field: 'val', title: '数据值', edit: "text", width: 85
             }
             , {
-                field: 'status', title: '状态', templet: function (d) {
-                    return '<input type="checkbox" name="status"  lay-filter="system-dictList-status" title="启用" data-id="' + d.id + '" ' + (d.status === 1 ? "checked" : "") + '>';
-                }, width: 110
+                field: 'status', title: '状态', dictType: "switch", width: 110
             }
             , {
                 field: 'rank', title: '排序', edit: "text", width: 65
@@ -73,13 +71,10 @@
                 field: 'create_date', title: '创建时间'
             }
         ]], res => {
-            hex.setIdMap(res.data);
             $('#system-dictList .edit').click(function () {
-                modal(hex.getIdMap(hex.getObjectId(this)));
+                modal(hex.getMapItem(this));
             });
-        }, saveUrl, [
-            {type: "checkbox", filter: "system-dictList-status", name: "status"}
-        ]);
+        }, saveUrl);
 
 
         $('#system-dictList .create').click(() => {

@@ -123,7 +123,7 @@ class SystemUserController extends HexBaseController
     public function saveUser(): ResponseInterface
     {
         $map = $this->request->post();
-        if ($map['pass'] !== '') {
+        if (!empty($map['pass'])) {
             $map['salt'] = StringUtil::generateRandStr(32);
             $map['pass'] = StringUtil::generatePassword($map['pass'], $map['salt']);
         }

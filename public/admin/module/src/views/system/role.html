@@ -57,14 +57,12 @@
                 field: 'name', title: '角色名称', edit: "text"
             }
             , {
-                field: 'status', title: '状态', templet: function (d) {
-                    return '<input type="checkbox" name="status"  lay-filter="system-role-status" title="启用" data-id="' + d.id + '" ' + (d.status === 1 ? "checked" : "") + '>';
-                }
+                field: 'status', title: '状态', dictType: "switch"
             },
             {
-                templet: function (d) {
-                    return '<button class="layui-btn layui-btn-warm layui-btn-xs edit" data-id="' + d.id + '"><i class="layui-icon layui-icon-auz"></i>修改</button>';
-                }
+                action: [
+                    {type: "button", icon: "layui-icon-survey", title: "修改", class: "layui-btn-normal edit"}
+                ]
             }
         ]], res => {
             res.data.forEach((r, index) => {
@@ -75,7 +73,7 @@
             });
             hex.setIdMap(res.data);
             $('#system-role .edit').click(function () {
-                modal(hex.getIdMap(hex.getObjectId(this)));
+                modal(hex.getMapItem(this));
             });
         }, saveUrl, [
             {type: "checkbox", filter: "system-role-status", name: "status"}

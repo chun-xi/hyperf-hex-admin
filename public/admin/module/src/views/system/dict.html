@@ -62,12 +62,11 @@
                 field: 'remark', title: '字典注释', edit: "text"
             },
             {
-                templet: function (d) {
-                    return '<button class="layui-btn  layui-btn-xs edit" data-id="' + d.id + '"><i class="layui-icon layui-icon-auz"></i>数据列表</button>';
-                }
+                action: [
+                    {type: "button", icon: "layui-icon-survey", title: "数据列表", class: "layui-btn-normal edit"}
+                ]
             }
         ]], res => {
-            hex.setIdMap(res.data);
             $('#system-dict .edit').click(function () {
                 let objectId = hex.getObjectId(this);
                 hex.set('systemDictId', objectId);
