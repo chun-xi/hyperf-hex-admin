@@ -1,7 +1,7 @@
 # hyperf-hex-admin
 基于hyperf开发的后台权限管理系统
 # 预览
-+ [http://chak.cc:9501/admin/index.html](http://chak.cc:9501/admin/index.html)
++ [http://hyperf.26.do/admin/index.html](http://hyperf.26.do/admin/index.html)
 + 账号：`demo`
 + 密码：`123456`
 + 会话保持使用的`jwt`和`redis`，通过登录时间实现了`单一设备登录`，如果不需要限制单一设备登录，找到Auth中间件删除对应的逻辑代码即可
@@ -15,6 +15,8 @@
 + 网址：`http://127.0.0.1:9501/admin/index.html`
 + 账号：`admin`
 + 密码：`123456`
+# 文档
++ [两分钟入门教程](https://github.com/266945/hyperf-hex-admin/blob/master/doc/%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B.md)
 # 优势
 + 基于layui前后端分离开发，页面占内存超低，再也不用怕被老板说卡的半死了
 + 代码清晰，扩展简单
