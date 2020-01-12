@@ -47,6 +47,7 @@
                 {title: "配置选项", name: "options", type: "json", placeholder: "请编辑配置选项"},
                 {title: "配置键名", name: "key", type: "input", placeholder: "请输入配置键名"},
                 {title: "中文名称", name: "name", type: "input", placeholder: "请输入配置中文名称"},
+                {title: "公开配置", name: "public", type: "switch", text: "公开"},
             ], res => {
                 tableInstance.instance.reload();
             }, values);
@@ -61,6 +62,9 @@
             }
             , {
                 field: 'key', title: '配置键名'
+            }
+            , {
+                field: 'public', title: '公开配置', dictType: 'switch'
             }
             , {
                 action: [

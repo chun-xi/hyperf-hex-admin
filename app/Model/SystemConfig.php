@@ -11,6 +11,7 @@ use Hyperf\DbConnection\Model\Model;
  * @property string $key
  * @property string $name
  * @property string $options
+ * @property int $public
  */
 class SystemConfig extends Model
 {
@@ -31,7 +32,7 @@ class SystemConfig extends Model
      *
      * @var array
      */
-    protected $casts = ['id' => 'integer'];
+    protected $casts = ['id' => 'integer', 'public' => 'integer'];
 
     /**
      * @var bool

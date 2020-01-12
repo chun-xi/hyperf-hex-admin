@@ -13,6 +13,8 @@ use App\Exception\HexException;
 use App\Middleware\AuthMiddleware;
 use App\Model\SystemConfig;
 use App\Quickly\QueryServiceQuickly;
+use App\Service\SystemConfigServiceInterface;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\PostMapping;
@@ -27,6 +29,12 @@ use Psr\Http\Message\ResponseInterface;
 class SystemConfigController extends HexBaseController
 {
     use QueryServiceQuickly;
+
+    /**
+     * @Inject()
+     * @var SystemConfigServiceInterface
+     */
+    protected SystemConfigServiceInterface $systemConfigService;
 
     /**
      * @PostMapping(path="getConfigs")
@@ -59,8 +67,15 @@ class SystemConfigController extends HexBaseController
         if (!$configId) {
             throw new HexException("本次操作没有任何更改");
         }
-        //清空缓存
-        $cache = $this->getRedis()->del(sprintf(Cache::SYSTEM_CONFIG, $map['key']));
+        $id = (int)$map['id'];
+        $cache = 0;
+        if ($id > 0) {
+            $config = $this->systemConfigService->findById($id);
+            if ($config) {
+                //清空缓存
+                $cache = $this->getRedis()->del(sprintf(Cache::SYSTEM_CONFIG, $config->key));
+            }
+        }
         return $this->response->json($this->getJson(200, '已更新,缓存更新状态:' . $cache));
     }
 
