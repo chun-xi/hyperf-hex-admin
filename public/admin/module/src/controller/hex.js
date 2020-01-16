@@ -589,7 +589,8 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
 
             //注册字典
             for (let i = 0; i < cols[0].length; i++) {
-                let field = cols[0][i].field, dictType = cols[0][i].dictType, title = cols[0][i].title;
+                let field = cols[0][i].field, dictType = cols[0][i].dictType, title = cols[0][i].title,
+                    url = cols[0][i].hasOwnProperty('url') ? cols[0][i].url : '';
 
                 if (cols[0][i].hasOwnProperty('dict') && dictType !== undefined) {
                     let dict = this.getDictSync(cols[0][i].dict);
@@ -624,6 +625,9 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                             case "switch":
                                 s = '<input type="checkbox" lay-filter="' + filter + '-checkbox" title="' + title + '" data-field="' + field + '" data-id="' + item.id + '" ' + (item[field] === 1 ? "checked" : "") + '>';
                                 break;
+                            case "image":
+                                s = '<img class="' + filter + '-image" style="height: 100%;cursor: pointer;" src="' + url + item[field] + '" data-id="' + item.id + '">';
+                                break;
                         }
                         return s;
                     }.bind(field);
@@ -656,6 +660,20 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                     statusCode: 200
                 },
                 done: result => {
+                    //创建image监听器
+                    $('.' + filter + '-image').click(function (obj) {
+                        var size = 400;
+                        var imageUrl = $(this).attr('src')
+                        layer.open({
+                            type: 1,
+                            title: false,
+                            closeBtn: 0, //不显示关闭按钮
+                            anim: 5,
+                            area: [size + 'px', size + 'px'],
+                            shadeClose: true, //开启遮罩关闭
+                            content: '<img src="' + imageUrl + '" style="height: ' + size + 'px;width: ' + size + 'px;">'
+                        });
+                    });
                     this.setIdMap(result.data);
                     done(result);
                 }
