@@ -21,6 +21,7 @@ trait QueryServiceQuickly
         $query = $queryTemplateEntity->getModel()::query();
         $with = $queryTemplateEntity->getWith();
         $where = $queryTemplateEntity->getWhere();  // equal_user = xxx
+        $order = $queryTemplateEntity->getOrder();
 
         //将where拆分
         foreach ($where as $key => $val) {
@@ -46,6 +47,8 @@ trait QueryServiceQuickly
         foreach ($with as $w) {
             $query = $query->with($w);
         }
+
+        $query = $query->orderBy($order['field'], $order['rule']);
 
         if ($queryTemplateEntity->isPaginate()) {
             return $query->paginate($queryTemplateEntity->getLimit(), $queryTemplateEntity->getField(), '', $queryTemplateEntity->getPage());
@@ -77,10 +80,12 @@ trait QueryServiceQuickly
 
         foreach ($map as $key => $item) {
             $middle = $createObjectEntity->getMiddle($key);
-            $item = urldecode($item);
             if ($middle) {
                 $middles[] = ['middle' => $middle, 'data' => $item];
             } else {
+                if (is_scalar($item)) {
+                    $item = urldecode($item);
+                }
                 $model->$key = $item;
             }
         }

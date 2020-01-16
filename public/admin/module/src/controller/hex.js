@@ -20,7 +20,6 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
         popup(url, fields, done, values = {}, area = '660px') {
             let d = ' <div class="layui-card-body"><form class="layui-form layui-form-pane hex-modal">';
             let objectContainer = {}
-
             //初步渲染界面
             fields.forEach(item => {
                 //设置默认值
@@ -37,6 +36,14 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                             '            <label class="layui-form-label">' + item.title + '</label>\n' +
                             '            <div class="layui-input-block">\n' +
                             '                <input name="' + item.name + '" placeholder="' + item.placeholder + '" type="text" class="layui-input" value="' + (values.hasOwnProperty(item.name) ? values[item.name] : '') + '"/>' +
+                            '            </div>\n' +
+                            '        </div>';
+                        break;
+                    case 'textarea':
+                        d += '        <div class="layui-form-item">\n' +
+                            '            <label class="layui-form-label">' + item.title + '</label>\n' +
+                            '            <div class="layui-input-block">\n' +
+                            '                <textarea ' + (item.hasOwnProperty('height') ? 'style="height:' + item.height + 'px"' : '') + ' name="' + item.name + '" placeholder="' + item.placeholder + '" class="layui-input">' + (values.hasOwnProperty(item.name) ? values[item.name] : '') + '</textarea>' +
                             '            </div>\n' +
                             '        </div>';
                         break;
@@ -97,7 +104,7 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                     case 'image':
                         d += '<div class="layui-form-item" pane=""><input type="hidden" name="' + item.name + '" value="' + (values.hasOwnProperty(item.name) ? values[item.name] : '') + '">\n' +
                             '    <label class="layui-form-label">' + item.title + '</label>\n' +
-                            '    <div class="layui-input-block ' + item.name + '"><img src="' + (values.hasOwnProperty(item.name) ? values[item.name] : '') + '" style="margin:3px;border-radius:5px;width: 100px;height: 100px;' + (values.hasOwnProperty(item.name) ? '' : 'display:none;') + '">\n' +
+                            '    <div class="layui-input-block ' + item.name + '"><img src="' + (item.hasOwnProperty('viewUrl') ? item.viewUrl : '') + (values.hasOwnProperty(item.name) ? values[item.name] : '') + '" style="margin:3px;border-radius:5px;max-width: 300px;' + (values.hasOwnProperty(item.name) ? '' : 'display:none;') + '">\n' +
                             '    <button type="button" class="layui-btn layui-btn-primary" style="' + (values.hasOwnProperty(item.name) ? 'display:none;' : '') + '"><i class="layui-icon layui-icon-picture"></i>' + item.placeholder + '</button >\n' +
                             '    </div>\n' +
                             '  </div>';
@@ -106,7 +113,7 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                         d += '<div class="layui-form-item" pane=""><input type="hidden" name="' + item.name + '" value="' + (values.hasOwnProperty(item.name) ? values[item.name] : '') + '">\n' +
                             '    <label class="layui-form-label">' + item.title + '</label>\n' +
                             '    <div class="layui-input-block ' + item.name + '">\n' +
-                            '    <button type="button" class="layui-btn layui-btn-primary" style="' + (values.hasOwnProperty(item.name) ? 'display:none;' : '') + '"><i class="layui-icon layui-icon-file-b"></i><span>' + item.placeholder + '</span></button >\n' +
+                            '    <button type="button" class="layui-btn layui-btn-primary"><i class="layui-icon ' + (item.hasOwnProperty('icon') ? item.icon : 'layui-icon-file-b') + '"></i><span>' + item.placeholder + '</span></button >\n' +
                             '    </div>\n' +
                             '  </div>';
                         break;
@@ -151,7 +158,6 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                                 break;
                         }
                     });
-                    console.log(paramsToJSONObject);
                     admin.req({
                         url: url,
                         data: paramsToJSONObject,
@@ -164,6 +170,11 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                 },
                 success: (layero, index) => {
                     fields.forEach(item => {
+                        //上传url
+                        let uploadUrl = item.hasOwnProperty('uploadUrl') ? item.uploadUrl : '/system/other/upload';
+                        //上传的url字段名称
+                        let uploadUrlName = item.hasOwnProperty('uploadUrlName') ? item.uploadUrlName : 'path';
+
                         switch (item.type) {
                             case "radio":
                                 if (item.hasOwnProperty('dict')) {
@@ -288,20 +299,17 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                                 });
                                 break;
                             case 'image':
-                                upload.render({
+                                let opts = {
                                     elem: '.hex-modal .' + item.name
-                                    , url: '/system/other/upload'
-                                    , headers: {
-                                        token: layui.data(setter.tableName)[setter.request.tokenName]
-                                    }
+                                    , url: uploadUrl
                                     , accept: 'images' //只允许上传图片
                                     , acceptMime: 'image/*' //只筛选图片
                                     , done: res => {
                                         if (res.code === 200) {
                                             let imgInstance = $('.hex-modal .' + item.name + ' img');
-                                            $('.hex-modal input[name=' + item.name + ']').val(res.data.path);
+                                            $('.hex-modal input[name=' + item.name + ']').val(res.data[uploadUrlName]);
                                             $('.hex-modal .' + item.name + ' button').hide();
-                                            imgInstance.attr('src', res.data.path);
+                                            imgInstance.attr('src', (item.hasOwnProperty('viewUrl') ? item.viewUrl : '') + res.data[uploadUrlName]);
                                             imgInstance.show();
                                         }
                                         layer.msg(res.msg);
@@ -310,20 +318,26 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                                         var percent = n + '%';
                                         layer.msg(percent);
                                     }
-                                })
+                                };
+                                if (item.token !== false) {
+                                    opts.headers = {
+                                        token: layui.data(setter.tableName)[setter.request.tokenName]
+                                    };
+                                }
+                                upload.render(opts)
                                 break;
                             case 'file':
                                 let buttonSpanInstance = $('.hex-modal .' + item.name + ' button span');
-                                upload.render({
+                                let exts = item.hasOwnProperty('exts') ? item.exts : 'jpg|png|gif|bmp|jpeg|gz|zip|rar|doc|xlsx';
+                                let acceptMime = item.hasOwnProperty('acceptMime') ? item.acceptMime : '/*';
+                                let opt = {
                                     elem: '.hex-modal .' + item.name
-                                    , url: '/system/other/upload'
-                                    , exts: 'jpg|png|gif|bmp|jpeg|gz|zip|rar|doc|xlsx'
-                                    , headers: {
-                                        token: layui.data(setter.tableName)[setter.request.tokenName]
-                                    }
+                                    , url: uploadUrl
+                                    , exts: exts
+                                    , acceptMime: acceptMime
                                     , done: res => {
                                         if (res.code === 200) {
-                                            $('.hex-modal input[name=' + item.name + ']').val(res.data.path);
+                                            $('.hex-modal input[name=' + item.name + ']').val(res.data[uploadUrlName]);
                                             buttonSpanInstance.html('上传成功');
                                         }
                                         layer.msg(res.msg);
@@ -332,7 +346,13 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                                         var percent = n + '%';
                                         buttonSpanInstance.html("请稍后,已上传:" + percent);
                                     }
-                                })
+                                };
+                                if (item.token !== false) {
+                                    opt.headers = {
+                                        token: layui.data(setter.tableName)[setter.request.tokenName]
+                                    };
+                                }
+                                upload.render(opt)
                                 break;
                             case 'json':
                                 objectContainer[item.name] = new JSONEditor(document.getElementsByClassName('hex-modal')[0].getElementsByClassName(item.name)[0], {});
@@ -456,6 +476,28 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
             $.ajaxSettings.async = true;
             return data;
         },
+        getConfig(key, done) {
+            admin.req({
+                url: '/system/config/getPrivatelyConfig',
+                method: "post",
+                data: {key: key},
+                done: done
+            });
+        },
+        getConfigSync(key) {
+            let data = [];
+            $.ajaxSettings.async = false;
+            admin.req({
+                url: '/system/config/getPrivatelyConfig',
+                method: "post",
+                data: {key: key},
+                done: res => {
+                    data = res.data;
+                }
+            });
+            $.ajaxSettings.async = true;
+            return data;
+        },
         paramsToJSONObject(url) {
             var hash;
             var myJson = {};
@@ -547,14 +589,20 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
 
             //注册字典
             for (let i = 0; i < cols[0].length; i++) {
-                let field = cols[0][i].field, dictType = cols[0][i].dictType;
+                let field = cols[0][i].field, dictType = cols[0][i].dictType, title = cols[0][i].title;
 
                 if (cols[0][i].hasOwnProperty('dict') && dictType !== undefined) {
                     let dict = this.getDictSync(cols[0][i].dict);
                     this.property.tableDict[field] = dict.data;
                     cols[0][i].templet = function (item) {
 
-                        let id = self.property.tableDict[field][item[field]].id, s;
+                        let id = 0, s;
+
+                        self.property.tableDict[field].forEach(dt => {
+                            if (item[field] === dt.id) {
+                                id = dt.id;
+                            }
+                        });
 
                         switch (dictType) {
                             case "select":
@@ -574,23 +622,24 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                         let s;
                         switch (dictType) {
                             case "switch":
-                                s = '<input type="checkbox" lay-filter="' + filter + '-checkbox" title="启用" data-field="' + field + '" data-id="' + item.id + '" ' + (item[field] === 1 ? "checked" : "") + '>';
+                                s = '<input type="checkbox" lay-filter="' + filter + '-checkbox" title="' + title + '" data-field="' + field + '" data-id="' + item.id + '" ' + (item[field] === 1 ? "checked" : "") + '>';
                                 break;
                         }
                         return s;
                     }.bind(field);
                 } else if (cols[0][i].hasOwnProperty('action')) {
-                    cols[0][i].action.forEach(item => {
-                        cols[0][i].templet = function (res) {
-                            let s;
+                    cols[0][i].templet = function (res) {
+                        let s = '';
+                        cols[0][i].action.forEach(item => {
                             switch (item.type) {
                                 case "button":
-                                    s = '<button class="layui-btn layui-btn-xs ' + item.class + '" data-id="' + res.id + '"><i class="layui-icon ' + item.icon + '"></i>' + item.title + '</button>';
+                                    s += '<button class="layui-btn layui-btn-xs ' + item.class + '" data-id="' + res.id + '"><i class="layui-icon ' + item.icon + '"></i>' + item.title + '</button>';
                                     break;
                             }
-                            return s;
-                        }
-                    });
+                        });
+                        return s;
+                    }
+
                 }
             }
 

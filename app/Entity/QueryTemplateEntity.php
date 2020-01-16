@@ -58,6 +58,12 @@ class QueryTemplateEntity
     private array $field = ['*'];
 
     /**
+     * 排序
+     * @var array
+     */
+    private array $order = ['rule' => 'desc', 'field' => 'id'];
+
+    /**
      * @return array
      */
     public function getField(): array
@@ -180,6 +186,25 @@ class QueryTemplateEntity
     public function setWith(array $with): self
     {
         $this->with[] = $with;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOrder(): array
+    {
+        return $this->order;
+    }
+
+    /**
+     * @param string $field
+     * @param string $rule
+     * @return QueryTemplateEntity
+     */
+    public function setOrder(string $field, string $rule = 'desc'): self
+    {
+        $this->order = ['field' => $field, 'rule' => $rule];
         return $this;
     }
 }

@@ -34,7 +34,10 @@ class SystemDictList extends Model
      *
      * @var array
      */
-    protected $casts = ['id' => 'integer', 'dict_id' => 'integer', 'status' => 'integer', 'rank' => 'integer'];
+    protected $casts = ['id' => 'string', 'dict_id' => 'integer', 'status' => 'integer', 'rank' => 'integer'];
 
+    /**
+     * @var bool
+     */
     public $timestamps = false;
 }
