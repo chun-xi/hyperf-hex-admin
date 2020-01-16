@@ -599,7 +599,7 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                         let id = 0, s;
 
                         self.property.tableDict[field].forEach(dt => {
-                            if (item[field] === dt.id) {
+                            if (item[field] == dt.id) {
                                 id = dt.id;
                             }
                         });
