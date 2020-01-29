@@ -41,6 +41,9 @@ trait QueryServiceQuickly
                 case "betweenEnd":
                     $query = $query->where($args[1], "<=", $val);
                     break;
+                case "search":
+                    $query = $query->where($args[1], "like", '%' . $val . '%');
+                    break;
             }
         }
 
@@ -61,7 +64,7 @@ trait QueryServiceQuickly
     /**
      * 智能创建或修改模型
      * @param CreateObjectEntity $createObjectEntity
-     * @return bool
+     * @return array|bool
      */
     public function createOrUpdateTemplate(CreateObjectEntity $createObjectEntity)
     {
@@ -71,9 +74,11 @@ trait QueryServiceQuickly
         $model = $query->find((int)$map['id']);
         $createDate = $createObjectEntity->getCreateDate();
         $updateDate = $createObjectEntity->getUpdateDate();
+        $new = false;
 
         if (!$model) {
             $model = new $object;
+            $new = true;
         }
 
         $middles = [];
@@ -118,8 +123,13 @@ trait QueryServiceQuickly
                     $middleObject->save();
                 }
             }
-            return $id;
+            if ($new) {
+                return ['status' => 0, 'id' => $id];
+            }
+
+            return ['status' => 1, 'id' => $id];
         } catch (\Exception $e) {
+            var_dump($e->getMessage());
             return false;
         }
     }

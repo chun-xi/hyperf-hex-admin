@@ -17,6 +17,9 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
             }
             return res;
         },
+        getPopupJQueryObject(name) {
+            return $('.hex-modal .' + name);
+        },
         popup(url, fields, done, values = {}, area = '660px') {
             let d = ' <div class="layui-card-body"><form class="layui-form layui-form-pane hex-modal">';
             let objectContainer = {}
@@ -27,6 +30,7 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                     values[item.name] = item.default;
                 }
 
+
                 switch (item.type) {
                     case 'hidden':
                         d += '<input type="hidden" name="' + item.name + '" value="' + (values.hasOwnProperty(item.name) ? values[item.name] : '') + '">';
@@ -35,7 +39,7 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                         d += '        <div class="layui-form-item">\n' +
                             '            <label class="layui-form-label">' + item.title + '</label>\n' +
                             '            <div class="layui-input-block">\n' +
-                            '                <input name="' + item.name + '" placeholder="' + item.placeholder + '" type="text" class="layui-input" value="' + (values.hasOwnProperty(item.name) ? values[item.name] : '') + '"/>' +
+                            '                <input name="' + item.name + '" placeholder="' + item.placeholder + '" type="text" class="layui-input ' + item.name + '" value="' + (values.hasOwnProperty(item.name) ? values[item.name] : '') + '"/>' +
                             '            </div>\n' +
                             '        </div>';
                         break;
@@ -43,7 +47,7 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                         d += '        <div class="layui-form-item">\n' +
                             '            <label class="layui-form-label">' + item.title + '</label>\n' +
                             '            <div class="layui-input-block">\n' +
-                            '                <textarea ' + (item.hasOwnProperty('height') ? 'style="height:' + item.height + 'px"' : '') + ' name="' + item.name + '" placeholder="' + item.placeholder + '" class="layui-input">' + (values.hasOwnProperty(item.name) ? values[item.name] : '') + '</textarea>' +
+                            '                <textarea ' + (item.hasOwnProperty('height') ? 'style="height:' + item.height + 'px"' : '') + ' name="' + item.name + '" placeholder="' + item.placeholder + '" class="layui-input ' + item.name + '">' + (values.hasOwnProperty(item.name) ? values[item.name] : '') + '</textarea>' +
                             '            </div>\n' +
                             '        </div>';
                         break;
@@ -66,7 +70,7 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                         d += '<div class="layui-form-item" pane=""><input type="hidden" name="' + item.name + '" value="' + (values.hasOwnProperty(item.name) ? values[item.name] : 0) + '">\n' +
                             '                <label class="layui-form-label">' + item.title + '</label>\n' +
                             '                <div class="layui-input-block">\n' +
-                            '                    <input type="checkbox" lay-filter="switch-' + item.name + '" value="1" title="' + item.text + '" ' + (values.hasOwnProperty(item.name) ? (values[item.name] === 1 ? 'checked' : '') : '') + '>\n' +
+                            '                    <input class="' + item.name + '" type="checkbox" lay-filter="switch-' + item.name + '" value="1" title="' + item.text + '" ' + (values.hasOwnProperty(item.name) ? (values[item.name] === 1 ? 'checked' : '') : '') + '>\n' +
                             '                </div>\n' +
                             '            </div>';
                         break;
@@ -74,7 +78,7 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                         d += '<div class="layui-form-item">\n' +
                             '                <label class="layui-form-label">' + item.title + '</label>\n' +
                             '                <div class="layui-input-block">\n' +
-                            '                    <select class="' + item.name + '" name="' + item.name + '"><option value="">' + item.placeholder + '</option></select>\n' +
+                            '                    <select lay-filter="hex-' + item.name + '"  class="' + item.name + '" name="' + item.name + '"><option value="">' + item.placeholder + '</option></select>\n' +
                             '                </div>\n' +
                             '            </div>';
                         break;
@@ -104,7 +108,7 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                     case 'image':
                         d += '<div class="layui-form-item" pane=""><input type="hidden" name="' + item.name + '" value="' + (values.hasOwnProperty(item.name) ? values[item.name] : '') + '">\n' +
                             '    <label class="layui-form-label">' + item.title + '</label>\n' +
-                            '    <div class="layui-input-block ' + item.name + '"><img src="' + (item.hasOwnProperty('viewUrl') ? item.viewUrl : '') + (values.hasOwnProperty(item.name) ? values[item.name] : '') + '" style="margin:3px;border-radius:5px;max-width: 300px;' + (values.hasOwnProperty(item.name) ? '' : 'display:none;') + '">\n' +
+                            '    <div class="layui-input-block ' + item.name + '"><img src="' + (item.hasOwnProperty('viewUrl') ? item.viewUrl : '') + (values.hasOwnProperty(item.name) ? values[item.name] : '') + '" style="margin:3px;border-radius:5px;max-width: ' + (item.hasOwnProperty('width') ? item.width : '300') + 'px;' + (values.hasOwnProperty(item.name) ? '' : 'display:none;') + '">\n' +
                             '    <button type="button" class="layui-btn layui-btn-primary" style="' + (values.hasOwnProperty(item.name) ? 'display:none;' : '') + '"><i class="layui-icon layui-icon-picture"></i>' + item.placeholder + '</button >\n' +
                             '    </div>\n' +
                             '  </div>';
@@ -124,6 +128,14 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                             '       <div class="' + item.name + '"></div>' +
                             '    </div>\n' +
                             '  </div>';
+                        break;
+                    case 'date':
+                        d += '        <div class="layui-form-item">\n' +
+                            '            <label class="layui-form-label">' + item.title + '</label>\n' +
+                            '            <div class="layui-input-block">\n' +
+                            '                <input name="' + item.name + '" placeholder="' + item.placeholder + '" type="text" class="layui-input ' + item.name + '" value="' + (values.hasOwnProperty(item.name) ? values[item.name] : '') + '"/>' +
+                            '            </div>\n' +
+                            '        </div>';
                         break;
                 }
             });
@@ -181,7 +193,7 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                                     let instance = $('.hex-modal .' + item.name);
                                     this.getDict(item.dict, res => {
                                         res.data.forEach(s => {
-                                            instance.append('<input name="' + item.name + '" type="radio" value="' + s.id + '" title="' + s.name + '" ' + (values.hasOwnProperty(item.name) ? (values[item.name] === s.id ? 'checked' : '') : '') + ' />');
+                                            instance.append('<input name="' + item.name + '" type="radio" value="' + s.id + '" title="' + s.name + '" ' + (values.hasOwnProperty(item.name) ? (values[item.name] == s.id ? 'checked' : '') : '') + ' />');
                                         });
                                         form.render();
                                     });
@@ -220,10 +232,15 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                                     let instance = $('.hex-modal .' + item.name);
                                     this.getDict(item.dict, res => {
                                         res.data.forEach(s => {
-                                            instance.append(' <option value="' + s.id + '"  ' + (values.hasOwnProperty(item.name) ? (values[item.name] === s.id ? 'selected' : '') : '') + '>' + s.name + '</option>');
+                                            instance.append(' <option value="' + s.id + '"  ' + (values.hasOwnProperty(item.name) ? (values[item.name] == s.id ? 'selected' : '') : '') + '>' + s.name + '</option>');
                                         });
                                         form.render();
                                     });
+                                    if (item.hasOwnProperty('change')) {
+                                        form.on('select(hex-' + item.name + ')', function (data) {
+                                            item.change(data.value, data);
+                                        });
+                                    }
                                 }
                                 break;
                             case "icon":
@@ -357,8 +374,18 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                             case 'json':
                                 objectContainer[item.name] = new JSONEditor(document.getElementsByClassName('hex-modal')[0].getElementsByClassName(item.name)[0], {});
                                 if (values.hasOwnProperty(item.name)) {
-                                    objectContainer[item.name].set(JSON.parse(values[item.name]));
+                                    if (typeof (values[item.name]) === "object") {
+                                        objectContainer[item.name].set(values[item.name]);
+                                    } else {
+                                        objectContainer[item.name].set(JSON.parse(values[item.name]));
+                                    }
                                 }
+                                break;
+                            case 'date':
+                                laydate.render({
+                                    elem: '.hex-modal .' + item.name,
+                                    type: 'datetime'
+                                });
                                 break;
                         }
                     });
@@ -386,7 +413,7 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                     values[item.name] = item.default;
                 }
 
-                let width = item.hasOwnProperty('width') ? 'style="width:' + item.width + 'px"' : '';
+                let width = item.hasOwnProperty('width') ? 'style="width:' + item.width + 'px;padding-top:10px;"' : '';
 
                 switch (item.type) {
                     case "input":
@@ -395,7 +422,7 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                             '                        </div>');
                         break;
                     case "date":
-                        formHtml.append(' <div class="layui-input-inline">\n' +
+                        formHtml.append(' <div class="layui-input-inline" ' + width + '>\n' +
                             '        <input type="text" class="layui-input" name="' + item.name + '" placeholder="' + item.title + '"  value="' + (values.hasOwnProperty(item.name) ? values[item.name] : '') + '">\n' +
                             '      </div>');
 
@@ -424,8 +451,8 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                 }
             });
 
-            formHtml.append('<button type="button" class="layui-btn layui-btn-primary layui-btn-sm queryBtn">' +
-                '<i class="layui-icon layui-icon-search"></i>查询</button>');
+            formHtml.append('<div class="layui-inline" style="padding-top:10px;"><button type="button" class="layui-btn layui-btn-primary layui-btn-sm queryBtn">' +
+                '<i class="layui-icon layui-icon-search"></i>查询</button></div>');
 
 
             instance.append('<div style="text-align: center;width: 100%;margin-top:10px;cursor: pointer;display: none;" class="hide"><i class="layui-icon layui-icon-up" title="关闭查询"></i></div>');
@@ -455,15 +482,26 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
             });
         },
         getDict(dict, done) {
+            let data = localStorage.getItem(dict);
+            if (data) {
+                done(JSON.parse(data));
+                return;
+            }
             admin.req({
                 url: '/system/dict/getDict',
                 method: "post",
                 data: {dict: dict},
-                done: done
+                done: res => {
+                    localStorage.setItem(dict, JSON.stringify(res));
+                    done(res);
+                }
             });
         },
         getDictSync(dict) {
-            let data = [];
+            let data = localStorage.getItem(dict);
+            if (data) {
+                return JSON.parse(data);
+            }
             $.ajaxSettings.async = false;
             admin.req({
                 url: '/system/dict/getDict',
@@ -474,7 +512,19 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                 }
             });
             $.ajaxSettings.async = true;
+            localStorage.setItem(dict, JSON.stringify(data));
             return data;
+        },
+        getDictNameSync(dict, value) {
+            let dictSync = this.getDictSync(dict);
+            let name = "无";
+            dictSync.data.forEach(item => {
+
+                if (item.id == value) {
+                    name = item.name;
+                }
+            });
+            return name;
         },
         getConfig(key, done) {
             admin.req({
@@ -614,7 +664,17 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                                 s += '</select>';
                                 break;
                             default:
-                                s = self.property.tableDict[field][item[field]].name;
+                                self.property.tableDict[field].forEach(x => {
+                                    if (x.id == item[field]) {
+                                        s = x.name;
+                                    }
+                                });
+
+                                if (!s) {
+                                    s = '无';
+                                }
+
+                            //   s = self.property.tableDict[field][item[field]].name;
                         }
                         return s;
                     }.bind(field);
@@ -627,6 +687,9 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                                 break;
                             case "image":
                                 s = '<img class="' + filter + '-image" style="height: 100%;cursor: pointer;" src="' + url + item[field] + '" data-id="' + item.id + '">';
+                                break;
+                            case "video":
+                                s = '<span style="cursor:pointer;" class="' + filter + '-video" data-id="' + item.id + '" data-src="' + url + item[field] + '"><i class="layui-icon layui-icon-video"></i></span>';
                                 break;
                         }
                         return s;
@@ -651,6 +714,7 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                 elem: elem
                 , method: "post"
                 , url: url
+                , limit: 15
                 , page: true
                 , headers: {
                     token: layui.data(setter.tableName)[setter.request.tokenName]
@@ -661,7 +725,7 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                 },
                 done: result => {
                     //创建image监听器
-                    $('.' + filter + '-image').click(function (obj) {
+                    $('.' + filter + '-image').click(function () {
                         var size = 400;
                         var imageUrl = $(this).attr('src')
                         layer.open({
@@ -669,13 +733,42 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                             title: false,
                             closeBtn: 0, //不显示关闭按钮
                             anim: 5,
-                            area: [size + 'px', size + 'px'],
+                            area: size + 'px',
                             shadeClose: true, //开启遮罩关闭
-                            content: '<img src="' + imageUrl + '" style="height: ' + size + 'px;width: ' + size + 'px;">'
+                            content: '<img  src="' + imageUrl + '" style="width: ' + size + 'px;">'
                         });
                     });
+
+                    //创建video监听器
+                    $('.' + filter + '-video').click(function () {
+                        var videoUrl = $(this).attr('data-src');
+                        layer.open({
+                            title: false,
+                            type: 1,
+                            skin: 'hex-watch-video',
+                            closeBtn: 0,
+                            anim: 1,
+                            area: ['893px', '600px'],
+                            shadeClose: true,
+                            content: '<div style="width: 100%;height: 600px;padding: 0;margin: 0;border-radius: 20px;" class="' + filter + '-video-play"></div>',
+                            success: res => {
+                                const dp = new DPlayer({
+                                    container: document.getElementsByClassName(filter + '-video-play')[0],
+                                    video: {
+                                        url: videoUrl,
+                                        // type: 'hls'
+                                    },
+                                    autoplay: true,
+                                    screenshot: true
+                                });
+                            }
+                        });
+                    });
+
                     this.setIdMap(result.data);
-                    done(result);
+                    if (done) {
+                        done(result);
+                    }
                 }
             });
 
@@ -721,6 +814,29 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
         },
         get(key) {
             return localStorage.getItem(key);
+        },
+        video(videoPath, autoplay = true) {
+            layer.open({
+                title: false,
+                type: 1,
+                skin: 'hex-watch-video',
+                closeBtn: 0,
+                anim: 1,
+                area: ['893px', '600px'],
+                shadeClose: true,
+                content: '<div style="width: 100%;height: 600px;padding: 0;margin: 0;border-radius: 20px;" class="hex-video-play"></div>',
+                success: res => {
+                    const dp = new DPlayer({
+                        container: document.getElementsByClassName('hex-video-play')[0],
+                        video: {
+                            url: videoPath,
+                            type: 'auto'
+                        },
+                        autoplay: autoplay,
+                        screenshot: true
+                    });
+                }
+            });
         }
     }
 
