@@ -404,7 +404,7 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                 '    }\n' +
                 '</style>');
 
-            let formHtml = $(elem + ' .hex-query-form');
+            let formHtml = $(elem + ' .hex-query-form'), boxesObject = {};
 
 
             fields.forEach(item => {
@@ -413,7 +413,7 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                     values[item.name] = item.default;
                 }
 
-                let width = item.hasOwnProperty('width') ? 'style="width:' + item.width + 'px;padding-top:10px;"' : '';
+                let width = item.hasOwnProperty('width') ? 'style="width:' + item.width + 'px;padding-top:10px;"' : 'padding-top:10px;';
 
                 switch (item.type) {
                     case "input":
@@ -448,6 +448,29 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                             });
                         }
                         break;
+                    case "boxes":
+                        formHtml.append('<div class="layui-input-inline" ' + width + '>\n' +
+                            '                        <span class="' + item.name + '"></span>' +
+                            '                        </div>');
+
+                        if (item.hasOwnProperty('dict')) {
+                            this.getDict(item.dict, res => {
+                                var boxesData = [];
+                                res.data.forEach(s => {
+                                    boxesData.push({name: s.name, value: s.id});
+                                });
+                                boxesObject[item.name] = xmSelect.render({
+                                    el: elem + ' .' + item.name,
+                                    size: 'mini',
+                                    style: {
+                                        height: '28px'
+                                    },
+                                    language: 'zn',
+                                    data: boxesData
+                                });
+                            });
+                        }
+                        break;
                 }
             });
 
@@ -463,10 +486,28 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
             //监听查询按钮
             $(elem + ' .queryBtn').click(res => {
                 let serialize = this.paramsToJSONObject(instance.serialize());
+                fields.forEach(item => {
+                    switch (item.type) {
+                        case "boxes":
+                            let list = [];
+                            let val = boxesObject[item.name].getValue();
+                            val.forEach(x => {
+                                list.push(x.value);
+                            });
+                            if (list.length > 0) {
+                                serialize[item.name] = list;
+                            } else {
+                                serialize[item.name] = "";
+                            }
+                            break;
+                    }
+                });
+
+                console.log(serialize);
+
                 table.reload({
                     where: serialize
                 });
-                console.log(serialize);
             });
 
             //监听查询按钮
@@ -475,6 +516,7 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                 $(this).hide();
                 $(elem + ' .hide').show();
             });
+
             $(elem + ' .hide').click(function () {
                 formHtml.slideUp(100);
                 $(this).hide();

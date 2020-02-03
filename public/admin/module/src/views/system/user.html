@@ -103,6 +103,7 @@
 
         hex.query('#system-user .query', tableInstance.instance, [
             {title: "用户名", name: "equal-user", type: "input", width: 151},
+            {title: "角色", name: "middle-role", type: "boxes", dict: "system_role,id,name", width: 250},
             {title: "注册时间", name: "betweenStart-create_date", type: "date", width: 170},
             {title: "请选择状态", name: "equal-status", type: "select", width: 170, dict: "system_user_status"},
         ]);

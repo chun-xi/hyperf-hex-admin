@@ -8,6 +8,7 @@ use App\Entity\CreateObjectEntity;
 use App\Entity\DeleteBatchEntity;
 use App\Entity\QueryTemplateEntity;
 use App\Exception\HexException;
+use Hyperf\Database\Query\JoinClause;
 
 trait QueryServiceQuickly
 {
@@ -22,11 +23,15 @@ trait QueryServiceQuickly
         $with = $queryTemplateEntity->getWith();
         $where = $queryTemplateEntity->getWhere();  // equal_user = xxx
         $order = $queryTemplateEntity->getOrder();
+        $field = $queryTemplateEntity->getField();
+        $fieldRefactor = false;
 
         //将where拆分
         foreach ($where as $key => $val) {
+            if (is_scalar($val)) {
+                $val = urldecode($val);
+            }
             $key = urldecode($key);
-            $val = urldecode($val);
             $args = explode('-', $key);
             if ($val === '') {
                 continue;
@@ -44,6 +49,20 @@ trait QueryServiceQuickly
                 case "search":
                     $query = $query->where($args[1], "like", '%' . $val . '%');
                     break;
+                case "middle":
+                    //这里将完全改变查询方式
+                    $middle = $queryTemplateEntity->getMiddle($args[1]);
+                    $query = $query->join($middle['middle'], function (JoinClause $join) use ($middle, $val) {
+                        $join->on("{$middle['localTable']}.id", '=', "{$middle['middle']}.{$middle['localKey']}")->whereIn("{$middle['middle']}.{$middle['foreignKey']}", $val);
+                    });
+                    //重构查询字段
+                    if (!$fieldRefactor) {
+                        foreach ($field as $index => $value) {
+                            $field[$index] = $middle['localTable'] . '.' . $value;
+                        }
+                        $fieldRefactor = true;
+                    }
+                    break;
             }
         }
 
@@ -54,7 +73,7 @@ trait QueryServiceQuickly
         $query = $query->orderBy($order['field'], $order['rule']);
 
         if ($queryTemplateEntity->isPaginate()) {
-            return $query->paginate($queryTemplateEntity->getLimit(), $queryTemplateEntity->getField(), '', $queryTemplateEntity->getPage());
+            return $query->paginate($queryTemplateEntity->getLimit(), $field, '', $queryTemplateEntity->getPage());
         }
 
         return $query->get();

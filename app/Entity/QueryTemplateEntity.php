@@ -64,6 +64,40 @@ class QueryTemplateEntity
     private array $order = ['rule' => 'desc', 'field' => 'id'];
 
     /**
+     * 中间查询表
+     * @var array
+     */
+    private array $middle = [];
+
+    /**
+     * @param string $key
+     * @return array
+     */
+    public function getMiddle(string $key): array
+    {
+        return $this->middle[$key];
+    }
+
+    /**
+     * @param string $key
+     * @param string $localTable
+     * @param string $middle
+     * @param string $foreignKey
+     * @param string $localKey
+     * @return QueryTemplateEntity
+     */
+    public function setMiddle(string $key, string $localTable, string $middle, string $foreignKey, string $localKey): self
+    {
+        $this->middle[$key] = [
+            'middle' => $middle,
+            'localTable' => $localTable,
+            'foreignKey' => $foreignKey,
+            'localKey' => $localKey
+        ];
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function getField(): array
