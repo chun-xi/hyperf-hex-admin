@@ -460,6 +460,7 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                                     boxesData.push({name: s.name, value: s.id});
                                 });
                                 boxesObject[item.name] = xmSelect.render({
+                                    name: item.name,
                                     el: elem + ' .' + item.name,
                                     size: 'mini',
                                     style: {
@@ -486,24 +487,23 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
             //监听查询按钮
             $(elem + ' .queryBtn').click(res => {
                 let serialize = this.paramsToJSONObject(instance.serialize());
-                fields.forEach(item => {
-                    switch (item.type) {
-                        case "boxes":
-                            let list = [];
-                            let val = boxesObject[item.name].getValue();
-                            val.forEach(x => {
-                                list.push(x.value);
-                            });
-                            if (list.length > 0) {
-                                serialize[item.name] = list;
-                            } else {
-                                serialize[item.name] = "";
-                            }
-                            break;
-                    }
-                });
-
-                console.log(serialize);
+                /*                fields.forEach(item => {
+                                    switch (item.type) {
+                                        case "boxes":
+                                            let list = [];
+                                            let val = boxesObject[item.name].getValue();
+                                            val.forEach(x => {
+                                                list.push(x.value);
+                                            });
+                                            if (list.length > 0) {
+                                                serialize[item.name] = list;
+                                            } else {
+                                                serialize[item.name] = "";
+                                            }
+                                            break;
+                                    }
+                                });
+                                console.log(serialize);*/
 
                 table.reload({
                     where: serialize

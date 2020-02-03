@@ -52,6 +52,7 @@ trait QueryServiceQuickly
                 case "middle":
                     //这里将完全改变查询方式
                     $middle = $queryTemplateEntity->getMiddle($args[1]);
+                    $val = explode(",", $val);
                     $query = $query->join($middle['middle'], function (JoinClause $join) use ($middle, $val) {
                         $join->on("{$middle['localTable']}.id", '=', "{$middle['middle']}.{$middle['localKey']}")->whereIn("{$middle['middle']}.{$middle['foreignKey']}", $val);
                     });
@@ -148,7 +149,6 @@ trait QueryServiceQuickly
 
             return ['status' => 1, 'id' => $id];
         } catch (\Exception $e) {
-            var_dump($e->getMessage());
             return false;
         }
     }
