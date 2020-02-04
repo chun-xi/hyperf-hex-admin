@@ -8,6 +8,7 @@ use App\Entity\CreateObjectEntity;
 use App\Entity\DeleteBatchEntity;
 use App\Entity\QueryTemplateEntity;
 use App\Exception\HexException;
+use App\Model\SystemUser;
 use Hyperf\Database\Query\JoinClause;
 
 trait QueryServiceQuickly
@@ -71,7 +72,7 @@ trait QueryServiceQuickly
             $query = $query->with($w);
         }
 
-        $query = $query->orderBy($order['field'], $order['rule']);
+        $query = $query->orderBy($order['field'], $order['rule'])->distinct();
 
         if ($queryTemplateEntity->isPaginate()) {
             return $query->paginate($queryTemplateEntity->getLimit(), $field, '', $queryTemplateEntity->getPage());

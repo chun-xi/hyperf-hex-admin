@@ -671,7 +671,7 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                 }
             });
         },
-        renderTable(filter, url, elem, cols, done, saveUrl = null) {
+        renderTable(filter, url, elem, cols, done, saveUrl = null, height = null) {
             let tableInstance, self = this;
 
             //注册全局修改事件
@@ -704,6 +704,9 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                                     s += '<option value="' + x.id + '" ' + (id === x.id ? 'selected' : '') + '>' + x.name + '</option>';
                                 });
                                 s += '</select>';
+                                break;
+                            case "boxes":
+                                s = '<span class="' + filter + '-' + field + '-' + item.id + '"></span>';
                                 break;
                             default:
                                 self.property.tableDict[field].forEach(x => {
@@ -752,7 +755,7 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                 }
             }
 
-            tableInstance = table.render({
+            let options = {
                 elem: elem
                 , method: "post"
                 , url: url
@@ -766,6 +769,7 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                     statusCode: 200
                 },
                 done: result => {
+
                     //创建image监听器
                     $('.' + filter + '-image').click(function () {
                         var size = 400;
@@ -807,12 +811,80 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                         });
                     });
 
+
+                    //创建关联渲染监听器
+                    let boxesField = [];
+                    let cellGen = [];
+
+                    for (let i = 0; i < cols[0].length; i++) {
+                        let field = cols[0][i].field, dictType = cols[0][i].dictType;
+                        switch (dictType) {
+                            case "boxes":
+                                boxesField.push(field);
+                                cellGen.push(i);
+                                break;
+                        }
+                    }
+
+
+
+
+                    result.data.forEach(item => {
+
+                        boxesField.forEach(field => {
+
+                            let boxesData = [];
+
+                            self.property.tableDict[field].forEach(x => {
+                                let obj = {name: x.name, value: x.id};
+                                boxesData.push(obj);
+                            });
+
+                            let initValue = [];
+
+                            item[field].forEach(j => {
+                                initValue.push(j.id);
+                            });
+
+                            xmSelect.render({
+                                name: item.name,
+                                el: "." + filter + "-" + field + "-" + item.id,
+                                size: 'mini',
+                                initValue: initValue,
+                                style: {
+                                    height: '28px'
+                                },
+                                language: 'zn',
+                                data: boxesData,
+                                on: k => {
+                                    let s = [];
+                                    k.arr.forEach(item => {
+                                        s.push(item.value);
+                                    });
+                                    tableChange(saveUrl, item.id, field, s);
+                                }
+                            });
+
+                            $("." + filter + "-" + field + "-" + item.id + ' xm-select').click(function () {
+                                cellGen.forEach( i => {
+                                    $('.laytable-cell-1-0-' + i).css("overflow", "unset");
+                                });
+                            });
+                        });
+                    });
+
                     this.setIdMap(result.data);
                     if (done) {
                         done(result);
                     }
                 }
-            });
+            };
+
+            if (height != null) {
+                options.height = height;
+            }
+
+            tableInstance = table.render(options);
 
             //创建checkbox监听器
             form.on('checkbox(' + filter + '-checkbox)', function (obj) {

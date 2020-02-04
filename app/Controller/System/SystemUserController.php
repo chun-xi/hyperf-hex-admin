@@ -108,7 +108,7 @@ class SystemUserController extends HexBaseController
         $queryTemplateEntity->setPage((int)$this->request->post('page'));
         $queryTemplateEntity->setPaginate(true);
         $queryTemplateEntity->setWith(['roles']);
-        $queryTemplateEntity->setMiddle('role', 'system_user', 'system_user_role', 'role_id', 'user_id');
+        $queryTemplateEntity->setMiddle('roles', 'system_user', 'system_user_role', 'role_id', 'user_id');
         $queryTemplateEntity->setWhere($this->request->post());
         $queryTemplateEntity->setField(['id', 'user', 'face', 'login_date', 'create_date', 'status']);
         $data = $this->findTemplateAll($queryTemplateEntity)->toArray();
@@ -132,7 +132,7 @@ class SystemUserController extends HexBaseController
         $createObjectEntity->setModel(SystemUser::class);
         $createObjectEntity->setMap($map);
         $createObjectEntity->setCreateDate('create_date');
-        $createObjectEntity->setMiddle('role', SystemUserRole::class, 'role_id', 'user_id');
+        $createObjectEntity->setMiddle('roles', SystemUserRole::class, 'role_id', 'user_id');
         $roleId = $this->createOrUpdateTemplate($createObjectEntity);
         if (!$roleId) {
             throw new HexException("本次操作没有任何更改");

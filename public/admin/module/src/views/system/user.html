@@ -44,7 +44,7 @@
                 {title: "头像", name: "face", type: "image", placeholder: "请选择图片"},
                 {title: "用户名", name: "user", type: "input", placeholder: "请输入用户名"},
                 {title: "密码", name: "pass", type: "input", placeholder: "请输入密码"},
-                {title: "角色", name: "role", type: "checkbox", dict: "system_role,id,name"},
+                {title: "角色", name: "roles", type: "checkbox", dict: "system_role,id,name"},
                 {title: "状态", name: "status", type: "switch", text: "启用"}
             ], res => {
                 tableInstance.instance.reload();
@@ -65,6 +65,9 @@
                 field: 'create_date', title: '创建时间'
             }
             , {
+                field: 'roles', title: '角色', dictType: "boxes", dict: "system_role,id,name"
+            }
+            , {
                 field: 'login_ip', title: '登录IP'
             }
             , {
@@ -78,9 +81,10 @@
         ]], res => {
             if (res.data !== undefined) {
                 res.data.forEach((r, index) => {
-                    res.data[index].role = [];
-                    res.data[index].roles.forEach(item => {
-                        res.data[index].role.push(item.id);
+                    let roles = res.data[index].roles;
+                    res.data[index].roles = [];
+                    roles.forEach(item => {
+                        res.data[index].roles.push(item.id);
                     });
                 });
             }
@@ -88,7 +92,7 @@
             $('#system-user .edit').click(function () {
                 modal(hex.getMapItem(this));
             });
-        }, saveUrl);
+        }, saveUrl, 660);
 
         $('#system-user .create').click(() => {
             modal();
@@ -103,7 +107,7 @@
 
         hex.query('#system-user .query', tableInstance.instance, [
             {title: "用户名", name: "equal-user", type: "input", width: 151},
-            {title: "角色", name: "middle-role", type: "boxes", dict: "system_role,id,name", width: 250},
+            {title: "角色", name: "middle-roles", type: "boxes", dict: "system_role,id,name", width: 250},
             {title: "注册时间", name: "betweenStart-create_date", type: "date", width: 170},
             {title: "请选择状态", name: "equal-status", type: "select", width: 170, dict: "system_user_status"},
         ]);
