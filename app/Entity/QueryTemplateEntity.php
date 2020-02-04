@@ -238,6 +238,10 @@ class QueryTemplateEntity
      */
     public function setOrder(string $field, string $rule = 'desc'): self
     {
+        if (empty($field) || empty($rule)) {
+            return $this;
+        }
+
         $this->order = ['field' => $field, 'rule' => $rule];
         return $this;
     }

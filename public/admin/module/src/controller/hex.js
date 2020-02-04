@@ -757,6 +757,7 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
 
             let options = {
                 elem: elem
+                , autoSort: false
                 , method: "post"
                 , url: url
                 , limit: 15
@@ -897,6 +898,17 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                     , data = obj.data //得到所在行所有键值
                     , field = obj.field; //得到字段
                 tableChange(saveUrl, data.id, field, value);
+            });
+
+            //监听自动排序
+            table.on('sort(' + filter + ')', function (obj) {
+                tableInstance.reload({
+                    initSort: obj,
+                    where: {
+                        orderBy: obj.field,
+                        orderType: obj.type
+                    }
+                });
             });
 
             return {instance: tableInstance, table: table};

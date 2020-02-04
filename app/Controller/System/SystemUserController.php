@@ -111,6 +111,7 @@ class SystemUserController extends HexBaseController
         $queryTemplateEntity->setMiddle('roles', 'system_user', 'system_user_role', 'role_id', 'user_id');
         $queryTemplateEntity->setWhere($this->request->post());
         $queryTemplateEntity->setField(['id', 'user', 'face', 'login_date', 'create_date', 'status', 'login_ip']);
+        $queryTemplateEntity->setOrder((string)$this->request->post('orderBy'), (string)$this->request->post('orderType'));
         $data = $this->findTemplateAll($queryTemplateEntity)->toArray();
         $json = $this->getJson(200, null, $data['data']);
         $json['count'] = $data['total'];
