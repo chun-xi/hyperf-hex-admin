@@ -827,8 +827,6 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                     }
 
 
-
-
                     result.data.forEach(item => {
 
                         boxesField.forEach(field => {
@@ -866,7 +864,7 @@ layui.define(['treeSelect', 'layer', 'jquery', 'form', 'admin', 'setter', 'table
                             });
 
                             $("." + filter + "-" + field + "-" + item.id + ' xm-select').click(function () {
-                                cellGen.forEach( i => {
+                                cellGen.forEach(i => {
                                     $('.laytable-cell-1-0-' + i).css("overflow", "unset");
                                 });
                             });
